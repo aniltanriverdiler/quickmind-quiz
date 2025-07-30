@@ -12,11 +12,6 @@ function QuestionCard() {
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
   const [timeLeft, setTimeLeft] = useState(60);
 
-  // Quiz finished control
-  if (currentQuestion >= shuffledQuestions.length) {
-    return <ScoreScreen />;
-  }
-
   // Timer logic
   useEffect(() => {
     if (timeLeft === 0) {
@@ -26,6 +21,11 @@ function QuestionCard() {
     const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
     return () => clearTimeout(timer);
   }, [timeLeft]);
+
+  // Quiz finished control
+  if (currentQuestion >= shuffledQuestions.length) {
+    return <ScoreScreen />;
+  }
 
   // User selects an answer
   const handleAnswer = (option: string) => {
