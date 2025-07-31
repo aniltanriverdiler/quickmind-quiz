@@ -2,11 +2,19 @@ import ScoreScreen from "./ScoreScreen";
 import { useEffect, useState } from "react";
 import { useQuizStore } from "../store/quizStore";
 import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
+import { RefreshCw, SkipForward } from "lucide-react";
 
 function QuestionCard() {
-  const { shuffledQuestions, currentQuestion, answerQuestion, nextQuestion } =
-    useQuizStore();
+  const {
+    shuffledQuestions,
+    currentQuestion,
+    answerQuestion,
+    nextQuestion,
+    resetQuiz,
+  } = useQuizStore();
   const question = shuffledQuestions[currentQuestion];
+  const navigate = useNavigate();
 
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
@@ -52,21 +60,42 @@ function QuestionCard() {
     nextQuestion();
   };
 
+  // Reset quiz & navigate home
+  const handleReset = () => {
+    resetQuiz();
+    navigate("/");
+  };
+
   if (!question) {
     return <p className="text-center text-xl">Quiz finished!</p>;
   }
 
   return (
     <div className="w-full max-w-xl bg-white shadow-lg rounded-2xl p-6 space-y-6">
+      {/* Header with Progress Bar & Timer */}
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">
-          Question {currentQuestion + 1}
+          Question {currentQuestion + 1} / {shuffledQuestions.length}
         </h2>
         <span className="text-red-500 font-bold">{timeLeft}</span>
       </div>
 
+      {/* Progress Bar */}
+      <div className="w-full h-2 bg-gray-200 rounded-full">
+        <div
+          className="h-2 bg-blue-500 rounded-full transition-all duration-300"
+          style={{
+            width: `${
+              ((currentQuestion + 1) / shuffledQuestions.length) * 100
+            }%`,
+          }}
+        />
+      </div>
+
+      {/* Question */}
       <p className="text-lg font-medium">{question.question}</p>
 
+      {/* Options */}
       <div className="grid gap-3">
         {question.options.map((option) => (
           <Button
@@ -90,6 +119,24 @@ function QuestionCard() {
             {option}
           </Button>
         ))}
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex justify-between mt-4">
+        {/* Reset Quiz */}
+        <Button variant="destructive" onClick={handleReset}>
+          <RefreshCw className="w-4 h-4" /> Reset Quiz
+        </Button>
+
+        {/* Skip Question */}
+        <Button
+          variant="secondary"
+          onClick={handleNext}
+          disabled={!!selectedAnswer}
+          className="ml-2"
+        >
+          <SkipForward className="w-4 h-4" /> Next Question
+        </Button>
       </div>
     </div>
   );
