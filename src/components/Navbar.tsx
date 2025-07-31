@@ -15,21 +15,31 @@ import { Input } from "./ui/input";
 import ModeToggle from "./ModeToggle";
 import { useAuthStore } from "../store/authStore";
 import { toast } from "sonner";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+
+// ✅ Shadcn DropdownMenu importları
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 function Navbar() {
   const [openLogin, setOpenLogin] = useState(false);
   const [openRegister, setOpenRegister] = useState(false);
 
-  // Getting required fields from Zustand store
   const { currentUser, login, logout } = useAuthStore();
+  const navigate = useNavigate();
 
   return (
     <nav className="w-full bg-white dark:bg-gray-800 shadow-md">
       <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-        {/* Game Image and Name */}
+        {/* Logo + App Name */}
         <div className="flex flex-row gap-2">
-          <img className="" src="src/assets/brain.png" alt="brain" />
+          <img src="src/assets/brain.png" alt="brain" />
           <NavLink
             to="/"
             className="text-2xl font-bold text-gray-800 dark:text-gray-100"
@@ -38,25 +48,40 @@ function Navbar() {
           </NavLink>
         </div>
 
-        {/* Buttons */}
+        {/* Right Side */}
         <div className="flex items-center gap-3">
           {currentUser ? (
             <>
-              {/* User Name */}
-              <span className="text-gray-700 dark:text-gray-200">
-                👤 {currentUser.name}
-              </span>
+              {/* ✅ Dropdown Menu for logged-in user */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="text-gray-700 dark:text-gray-200"
+                  >
+                    👤 {currentUser.name}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-40">
+                  <DropdownMenuLabel>Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
 
-              {/* Logout Button */}
-              <Button
-                variant="destructive"
-                onClick={() => {
-                  logout();
-                  toast("👋 You have been logged out");
-                }}
-              >
-                Logout
-              </Button>
+                  {/* 📜 History Link */}
+                  <DropdownMenuItem onClick={() => navigate("/history")}>
+                    📜 History
+                  </DropdownMenuItem>
+
+                  {/* 🔒 Logout */}
+                  <DropdownMenuItem
+                    onClick={() => {
+                      logout();
+                      toast("👋 You have been logged out");
+                    }}
+                  >
+                    🔒 Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </>
           ) : (
             <>
@@ -125,13 +150,6 @@ function Navbar() {
                       <Button type="submit">Login</Button>
                     </DialogFooter>
                   </form>
-
-                  <div className="text-center">
-                    <p className="text-sm text-gray-500">
-                      Don’t have an account?{" "}
-                      <span className="font-semibold text-black">Register</span>
-                    </p>
-                  </div>
                 </DialogContent>
               </Dialog>
 
@@ -213,19 +231,12 @@ function Navbar() {
                       <Button type="submit">Register</Button>
                     </DialogFooter>
                   </form>
-
-                  <div className="text-center">
-                    <p className="text-sm text-gray-500">
-                      Already have an account?{" "}
-                      <span className="font-semibold text-black">Login</span>
-                    </p>
-                  </div>
                 </DialogContent>
               </Dialog>
             </>
           )}
 
-          {/* Dark Mode Switch */}
+          {/* 🌙 Dark Mode Switch */}
           <ModeToggle />
         </div>
       </div>

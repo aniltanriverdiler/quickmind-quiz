@@ -1,5 +1,11 @@
+import { Moon } from "lucide-react";
+
 function ModeToggle() {
-  return <button className="ml-1 px-3 py-1 border rounded">🌓</button>;
+  return (
+    <button className="ml-1 p-2 border rounded">
+      <Moon />
+    </button>
+  );
 }
 
 export default ModeToggle;

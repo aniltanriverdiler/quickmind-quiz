@@ -12,9 +12,11 @@ import {
 } from "./ui/dialog";
 import { DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
 import { Card, CardContent } from "./ui/card";
+import { useAuthStore } from "../store/authStore";
 
 function ScoreScreen() {
   const { score, shuffledQuestions, userAnswers, resetQuiz } = useQuizStore();
+  const { currentUser } = useAuthStore(); //login users
   const navigate = useNavigate();
 
   const totalQuestions = shuffledQuestions.length;
@@ -33,19 +35,25 @@ function ScoreScreen() {
 
   // Save results (LocalStorage)
   const handleSaveResults = () => {
-    const history = JSON.parse(localStorage.getItem("quizHistory") || "[]");
+    if (!currentUser) {
+      toast.error("⚠️ Please login to save your results!");
+      return;
+    }
+
+    const storageKey = `quizHistory_${currentUser.email}`;
+    const history = JSON.parse(localStorage.getItem(storageKey) || "[]");
+   
     const newResult = {
       date: new Date().toLocaleString(),
       score,
       totalQuestions,
       wrongAnswers,
       skippedQuestions,
+      percentage,
     };
-    localStorage.setItem(
-      "quizHistory",
-      JSON.stringify([...history, newResult])
-    );
-    toast.success("✅ Results saved successfully!");
+
+    localStorage.setItem(storageKey, JSON.stringify([...history, newResult]));
+    toast.success("✅ Your results have been saved!");
   };
 
   return (

@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import Layout from "../layout/Layout";
 import Home from "../pages/Home";
 import Quiz from "../pages/Quiz";
+import History from "../pages/History";
 
 export const router = createBrowserRouter([
   {
@@ -15,6 +16,10 @@ export const router = createBrowserRouter([
       {
         path: "quiz",
         element: <Quiz />,
+      },
+      {
+        path: "history",
+        element: <History />,
       },
     ],
   },
