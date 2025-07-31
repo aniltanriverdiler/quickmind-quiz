@@ -11,8 +11,10 @@ function QuestionCard() {
     currentQuestion,
     answerQuestion,
     nextQuestion,
+    skipQuestion, 
     resetQuiz,
   } = useQuizStore();
+
   const question = shuffledQuestions[currentQuestion];
   const navigate = useNavigate();
 
@@ -23,7 +25,7 @@ function QuestionCard() {
   // Timer logic
   useEffect(() => {
     if (timeLeft === 0) {
-      handleNext();
+      handleSkip(); // Auto-skip when time expires
       return;
     }
     const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
@@ -35,15 +37,15 @@ function QuestionCard() {
     return <ScoreScreen />;
   }
 
-  // User selects an answer
+  // If user submits an answer
   const handleAnswer = (option: string) => {
     setSelectedAnswer(option);
     if (option === question.correctAnswer) {
       setFeedback("correct");
-      answerQuestion(true);
+      answerQuestion(true, option);
     } else {
       setFeedback("wrong");
-      answerQuestion(false);
+      answerQuestion(false, option);
     }
 
     // Auto-advance to the next question after 1 second
@@ -52,12 +54,20 @@ function QuestionCard() {
     }, 1000);
   };
 
-  //Go to next question
+  // Proceed after answering (not skip)
   const handleNext = () => {
     setSelectedAnswer(null);
     setFeedback(null);
     setTimeLeft(60);
     nextQuestion();
+  };
+
+  // Skip function
+  const handleSkip = () => {
+    setSelectedAnswer(null);
+    setFeedback(null);
+    setTimeLeft(60);
+    skipQuestion();
   };
 
   // Reset quiz & navigate home
@@ -131,7 +141,7 @@ function QuestionCard() {
         {/* Skip Question */}
         <Button
           variant="secondary"
-          onClick={handleNext}
+          onClick={handleSkip} 
           disabled={!!selectedAnswer}
           className="ml-2"
         >
