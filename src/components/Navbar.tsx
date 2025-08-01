@@ -39,7 +39,7 @@ function Navbar() {
       <div className="max-w-6xl mx-auto px-2 sm:px-4 py-2 sm:py-3 flex justify-between items-center">
         {/* Logo + App Name */}
         <div className="flex flex-row gap-2 items-center">
-          <img src="src/assets/brain.png" alt="brain" className="w-8 h-8" />
+          <img src="/public/brain.png" alt="brain" className="w-8 h-8" />
           <NavLink
             to="/"
             className="text-xl sm:text-2xl font-bold inline-block bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 text-transparent bg-clip-text hover:from-pink-500 hover:via-purple-500 hover:to-indigo-500 transition-all duration-500"
