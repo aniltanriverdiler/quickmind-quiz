@@ -7,8 +7,9 @@ The project features **real-time feedback**, user authentication, and result tra
 
 ## 🚀 Live Demo & Source Code
 
-🔗 **Live Demo:** [https://quickmind-quiz-app.netlify.app/](https://quickmind.netlify.app)  
-💻 **GitHub Repository:** [https://github.com/aniltanriverdiler/quickmind-quiz.git](https://github.com/yourusername/quickmind)
+🔗 **Live Demo:** [https://quickmind-quiz-app.netlify.app/](https://quickmind-quiz-app.netlify.app)
+
+💻 **GitHub Repository:** [https://github.com/aniltanriverdiler/quickmind-quiz](https://github.com/aniltanriverdiler/quickmind-quiz)
 
 ---
 
