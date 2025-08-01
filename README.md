@@ -75,11 +75,11 @@ The project features **real-time feedback**, user authentication, and result tra
 
 ## 🛠️ Installation & Run
 1️⃣ Install dependencies:
-    npm install
+  ```- npm install```
 2️⃣ Run development server:
-    npm run dev
+  ```- npm run dev```
 3️⃣ Open the app in your browser:
-    http://localhost:5173
+  ```- http://localhost:5173```
 
 ---    
 
