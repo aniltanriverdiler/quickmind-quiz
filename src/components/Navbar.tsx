@@ -35,14 +35,14 @@ function Navbar() {
   const navigate = useNavigate();
 
   return (
-    <nav className="w-full bg-white dark:bg-gray-800 shadow-md">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+    <nav className="w-full bg-card dark:bg-background shadow-sm border-b border-border">
+      <div className="max-w-6xl mx-auto px-2 sm:px-4 py-2 sm:py-3 flex justify-between items-center">
         {/* Logo + App Name */}
-        <div className="flex flex-row gap-2">
-          <img src="src/assets/brain.png" alt="brain" />
+        <div className="flex flex-row gap-2 items-center">
+          <img src="src/assets/brain.png" alt="brain" className="w-8 h-8" />
           <NavLink
             to="/"
-            className="text-2xl font-bold text-gray-800 dark:text-gray-100"
+            className="text-xl sm:text-2xl font-bold inline-block bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 text-transparent bg-clip-text hover:from-pink-500 hover:via-purple-500 hover:to-indigo-500 transition-all duration-500"
           >
             QuickMind
           </NavLink>

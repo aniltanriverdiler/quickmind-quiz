@@ -5,7 +5,7 @@ import { Toaster } from "../components/ui/sonner";
 
 function Layout() {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900 transition-colors">
+    <div className="min-h-screen flex flex-col bg-background transition-colors">
       {/* Navbar */}
       <Navbar />
 

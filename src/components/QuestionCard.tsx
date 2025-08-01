@@ -81,19 +81,21 @@ function QuestionCard() {
   }
 
   return (
-    <div className="w-full max-w-xl bg-white shadow-lg rounded-2xl p-6 space-y-6">
+    <div className="w-full max-w-xl bg-card shadow-md rounded-xl p-4 sm:p-6 space-y-6 mx-auto animate-fadeIn">
       {/* Header with Progress Bar & Timer */}
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">
+        <h2 className="text-lg sm:text-xl font-semibold">
           Question {currentQuestion + 1} / {shuffledQuestions.length}
         </h2>
-        <span className="text-red-500 font-bold">{timeLeft}</span>
+        <span className="text-primary dark:text-gray-200 font-bold text-lg px-3 py-1 rounded-lg bg-primary/10 dark:bg-primary border border-primary/20 shadow-sm">
+          {timeLeft}
+        </span>
       </div>
 
       {/* Progress Bar */}
-      <div className="w-full h-2 bg-gray-200 rounded-full">
+      <div className="w-full h-2 bg-muted rounded-full">
         <div
-          className="h-2 bg-blue-500 rounded-full transition-all duration-300"
+          className="h-2 bg-primary dark:bg-gray-200 rounded-full transition-all duration-300"
           style={{
             width: `${
               ((currentQuestion + 1) / shuffledQuestions.length) * 100
@@ -103,7 +105,9 @@ function QuestionCard() {
       </div>
 
       {/* Question */}
-      <p className="text-lg font-medium">{question.question}</p>
+      <p className="text-base sm:text-lg font-medium text-foreground/90">
+        {question.question}
+      </p>
 
       {/* Options */}
       <div className="grid gap-3">
@@ -111,20 +115,20 @@ function QuestionCard() {
           <Button
             key={option}
             variant="outline"
-            className={`justify-start w-full
-        ${
-          selectedAnswer === option && feedback === "correct"
-            ? "bg-green-500 text-white"
-            : ""
-        }
-        ${
-          selectedAnswer === option && feedback === "wrong"
-            ? "bg-red-500 text-white"
-            : ""
-        } 
-        `}
+            className={`justify-start w-full transition-all duration-200
+              ${
+                selectedAnswer === option && feedback === "correct"
+                  ? "bg-green-600/90 text-white"
+                  : ""
+              }
+              ${
+                selectedAnswer === option && feedback === "wrong"
+                  ? "bg-destructive text-white"
+                  : ""
+              }
+            `}
             onClick={() => handleAnswer(option)}
-            disabled={!!selectedAnswer} // Lock the buttons once the user makes a selection
+            disabled={!!selectedAnswer}
           >
             {option}
           </Button>
@@ -140,7 +144,7 @@ function QuestionCard() {
           {feedback === "wrong" && (
             <div>
               <p className="text-red-600 font-semibold text-lg">❌ Wrong!</p>
-              <p className="text-gray-700 mt-1">
+              <p className="text-gray-700 dark:text-gray-200 mt-1">
                 ✅ Correct Answer:{" "}
                 <span className="font-bold">{question.correctAnswer}</span>
               </p>

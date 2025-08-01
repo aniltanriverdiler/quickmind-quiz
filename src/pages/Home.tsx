@@ -13,27 +13,27 @@ function Home() {
   const { currentUser } = useAuthStore();
 
   return (
-    <div className="text-center space-y-8 mt-10">
+    <div className="text-center space-y-8 mt-8 sm:mt-10 px-2 animate-fadeIn">
       {/* Greeting Section */}
-      <h1 className="text-4xl font-bold">
+      <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 inline-block text-transparent bg-clip-text">
         {currentUser
           ? `Welcome back, ${currentUser.name}! 🎉`
           : "Welcome to QuickMind! 🧠"}
       </h1>
 
       {/* Short description */}
-      <p className="text-lg text-gray-600 dark:text-gray-300 max-w-lg mx-auto">
+      <p className="text-base sm:text-lg text-muted-foreground max-w-lg mx-auto">
         Test your knowledge with fun questions and see how much you know! Answer
         quickly – every second counts. ⏳
       </p>
 
       {/* Rules / How to Play */}
-      <Card className="max-w-md mx-auto">
+      <Card className="max-w-md mx-auto bg-card/90 border shadow-md rounded-xl">
         <CardHeader>
-          <CardTitle className="text-2xl">📜 How to Play?</CardTitle>
+          <CardTitle className="text-xl sm:text-2xl">📜 How to Play?</CardTitle>
         </CardHeader>
         <CardContent>
-          <ul className="text-left list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+          <ul className="text-left list-disc list-inside space-y-2 text-foreground/80">
             <li>You have 60 seconds for each question.</li>
             <li>Skip a question, no points.</li>
             <li>Wrong answers won’t count as correct. 😅</li>
@@ -43,12 +43,11 @@ function Home() {
       </Card>
 
       {/* Action Buttons */}
-      <div className="flex justify-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-center gap-4">
         <Button className="px-6 py-3 text-lg" onClick={() => navigate("/quiz")}>
-          🚀 Start Quiz
+          {" "}
+          🚀 Start Quiz{" "}
         </Button>
-
-        {/* Show History Button only if logged in */}
         {currentUser && (
           <Button
             variant="outline"
