@@ -10,6 +10,8 @@ import {
   TableCell,
   TableCaption,
 } from "../components/ui/table";
+import { Button } from "../components/ui/button";
+import { Play } from "lucide-react";
 
 function History() {
   const { currentUser } = useAuthStore();
@@ -28,7 +30,13 @@ function History() {
 
   return (
     <div className="max-w-4xl mx-auto mt-10 bg-white p-6 rounded-lg shadow">
-      <h2 className="text-3xl font-bold mb-6">📜 Quiz History</h2>
+      <div className="flex flex-row justify-between">
+        <h2 className="text-3xl font-bold mb-6">📜 Quiz History</h2>
+        <Button onClick={() => navigate("/quiz")}>
+          <Play className="w-4 h-4" />
+          Start New Quiz
+        </Button>
+      </div>
 
       <Table>
         <TableCaption>Your past quiz results</TableCaption>

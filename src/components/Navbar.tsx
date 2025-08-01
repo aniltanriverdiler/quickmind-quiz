@@ -17,7 +17,6 @@ import { useAuthStore } from "../store/authStore";
 import { toast } from "sonner";
 import { NavLink, useNavigate } from "react-router-dom";
 
-// ✅ Shadcn DropdownMenu importları
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,6 +25,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { LogOut, ScrollText, UserCheck } from "lucide-react";
 
 function Navbar() {
   const [openLogin, setOpenLogin] = useState(false);
@@ -52,33 +52,34 @@ function Navbar() {
         <div className="flex items-center gap-3">
           {currentUser ? (
             <>
-              {/* ✅ Dropdown Menu for logged-in user */}
+              {/* Dropdown Menu for logged-in user */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
                     className="text-gray-700 dark:text-gray-200"
                   >
-                    👤 {currentUser.name}
+                    <UserCheck className="w-6 h-6" strokeWidth={3} />
+                    {currentUser.name}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-40">
                   <DropdownMenuLabel>Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
 
-                  {/* 📜 History Link */}
+                  {/* History Link */}
                   <DropdownMenuItem onClick={() => navigate("/history")}>
-                    📜 History
+                    <ScrollText className="w-6 h-6" strokeWidth={3} /> History
                   </DropdownMenuItem>
 
-                  {/* 🔒 Logout */}
+                  {/* Logout */}
                   <DropdownMenuItem
                     onClick={() => {
                       logout();
                       toast("👋 You have been logged out");
                     }}
                   >
-                    🔒 Logout
+                    <LogOut className="w-6 h-6" strokeWidth={3} /> Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -236,7 +237,7 @@ function Navbar() {
             </>
           )}
 
-          {/* 🌙 Dark Mode Switch */}
+          {/* Dark Mode Switch */}
           <ModeToggle />
         </div>
       </div>
