@@ -11,7 +11,7 @@ function QuestionCard() {
     currentQuestion,
     answerQuestion,
     nextQuestion,
-    skipQuestion, 
+    skipQuestion,
     resetQuiz,
   } = useQuizStore();
 
@@ -48,10 +48,10 @@ function QuestionCard() {
       answerQuestion(false, option);
     }
 
-    // Auto-advance to the next question after 1 second
+    // Auto-advance to the next question after 2 second
     setTimeout(() => {
       handleNext();
-    }, 1000);
+    }, 2000);
   };
 
   // Proceed after answering (not skip)
@@ -131,6 +131,24 @@ function QuestionCard() {
         ))}
       </div>
 
+      {/* Feedback Message */}
+      {selectedAnswer && (
+        <div className="text-center mt-2">
+          {feedback === "correct" && (
+            <p className="text-green-600 font-semibold text-lg">✅ Correct!</p>
+          )}
+          {feedback === "wrong" && (
+            <div>
+              <p className="text-red-600 font-semibold text-lg">❌ Wrong!</p>
+              <p className="text-gray-700 mt-1">
+                ✅ Correct Answer:{" "}
+                <span className="font-bold">{question.correctAnswer}</span>
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Action Buttons */}
       <div className="flex justify-between mt-4">
         {/* Reset Quiz */}
@@ -141,7 +159,7 @@ function QuestionCard() {
         {/* Skip Question */}
         <Button
           variant="secondary"
-          onClick={handleSkip} 
+          onClick={handleSkip}
           disabled={!!selectedAnswer}
           className="ml-2"
         >
