@@ -36,7 +36,7 @@ The project features **real-time feedback**, user authentication, and result tra
 ---
 
 ## 📂 Project Structure
-quickmind/
+```quickmind/
 ├─ public/                  # Static assets (favicon, brain logo, etc.)
 ├─ src/
 │  ├─ assets/               # Images and static assets
@@ -70,7 +70,7 @@ quickmind/
 ├─ tsconfig.json
 ├─ vite.config.ts
 └─ README.md
-
+```
 ---
 
 ## 🛠️ Installation & Run
