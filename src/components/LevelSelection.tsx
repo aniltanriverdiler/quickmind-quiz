@@ -1,75 +1,121 @@
-import { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuizStore } from "../store/quizStore";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 import { Button } from "./ui/button";
-
-const categories = [
-  { key: "technology", label: "Technology", emoji: "💻" },
-  { key: "history", label: "History", emoji: "📜" },
-  { key: "sports", label: "Sports", emoji: "🏆" },
-];
-
-const difficulties = [
-  { key: "easy", label: "Easy", color: "bg-green-400" },
-  { key: "medium", label: "Medium", color: "bg-yellow-400" },
-  { key: "hard", label: "Hard", color: "bg-red-400" },
-];
+import { Brain, Book, Trophy } from "lucide-react";
 
 function LevelSelection() {
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(
-    null
-  );
+  const { resetQuiz, setCategory, setDifficulty, initializeQuiz } =
+    useQuizStore();
 
-  const handleStartQuiz = () => {
-    if (selectedCategory && selectedDifficulty) {
-      navigate(
-        `/quiz?category=${selectedCategory}&difficulty=${selectedDifficulty}`
-      );
-    }
+  const categories = [
+    {
+      key: "technology" as const,
+      name: "Technology",
+      description: "Coding, web, networking and modern tech topics.",
+      Icon: Brain,
+    },
+    {
+      key: "history" as const,
+      name: "History",
+      description: "World events, empires and historical figures.",
+      Icon: Book,
+    },
+    {
+      key: "sports" as const,
+      name: "Sports",
+      description: "Football, tennis, F1 and more competitive fun.",
+      Icon: Trophy,
+    },
+  ];
+
+  type DifficultyKey = "easy" | "medium" | "hard";
+  const difficultyConfigs: Record<
+    DifficultyKey,
+    { label: string; color: string }
+  > = {
+    easy: { label: "Easy", color: "bg-green-500" },
+    medium: { label: "Medium", color: "bg-yellow-500" },
+    hard: { label: "Hard", color: "bg-red-500" },
+  };
+
+  const handleSelect = (
+    categoryKey: "technology" | "history" | "sports",
+    difficultyKey: DifficultyKey
+  ) => {
+    // Reset current quiz state, store the new selection, initialize and navigate
+    resetQuiz();
+    setCategory(categoryKey);
+    setDifficulty(difficultyKey);
+    initializeQuiz(categoryKey, difficultyKey);
+    navigate(`/quiz?category=${categoryKey}&difficulty=${difficultyKey}`);
   };
 
   return (
-    <div className="max-w-3xl mx-auto mt-10 p-6 space-y-6 text-center">
-      <h1 className="text-2xl font-bold">Choose Your Quiz</h1>
+    <div className="max-w-6xl mx-auto p-6 space-y-8">
+      <div className="text-center space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight">
+          Select Your Challenge
+        </h1>
+        <p className="text-muted-foreground">
+          Choose your category and difficulty to start the quiz.
+        </p>
+      </div>
 
-      <div className="flex flex-wrap justify-center gap-4">
-        {categories.map((cat) => (
-          <Button
-            key={cat.key}
-            onClick={() => setSelectedCategory(cat.key)}
-            className={`px-6 py-3 rounded-lg border-2 font-semibold transition-all ${
-              selectedCategory === cat.key
-                ? "border-blue-500 bg-blue-100"
-                : "border-gray-300 hover:bg-gray-100"
-            }`}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {categories.map(({ key, name, description, Icon }) => (
+          <Card
+            key={key}
+            className="overflow-hidden hover:shadow-lg transition-shadow"
           >
-            {cat.emoji} {cat.label}
-          </Button>
+            <CardHeader className="flex items-center text-center">
+              <div className="w-14 h-14 rounded-full bg-primary/10 text-primary flex items-center justify-center shadow-sm">
+                <Icon className="w-7 h-7" />
+              </div>
+              <CardTitle className="mt-2">{name}</CardTitle>
+              <CardDescription>{description}</CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="text-sm text-muted-foreground mb-3">
+                Select difficulty:
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {(Object.keys(difficultyConfigs) as DifficultyKey[]).map(
+                  (diff) => (
+                    <Button
+                      key={diff}
+                      onClick={() => handleSelect(key, diff)}
+                      className={`${difficultyConfigs[diff].color} text-white hover:brightness-110 shadow-sm`}
+                    >
+                      {difficultyConfigs[diff].label}
+                    </Button>
+                  )
+                )}
+              </div>
+            </CardContent>
+            <CardFooter className="justify-center text-xs text-muted-foreground">
+              Pick a level and jump right in!
+            </CardFooter>
+          </Card>
         ))}
       </div>
 
-      <div className="flex flex-wrap justify-center gap-4">
-        {difficulties.map((diff) => (
-          <Button
-            key={diff.key}
-            onClick={() => setSelectedDifficulty(diff.key)}
-            className={`px-6 py-3 rounded-lg font-semibold text-white transition-all ${
-              selectedDifficulty === diff.key
-                ? diff.color + "ring-4 ring-offset-2 ring-gray-200"
-                : diff.color + "hover:brightness-110"
-            }`}
-          ></Button>
-        ))}
+      {/* Tip Section */}
+      <div className="bg-gray-200 p-3 mx-48 rounded-lg">
+        <p className="text-center font-semibold">
+          💡 Tip: Each level contains 10 questions. You have 60 seconds per
+          question!
+        </p>
       </div>
-
-      <Button
-        onClick={handleStartQuiz}
-        disabled={!selectedCategory || !selectedDifficulty}
-        className="mt-4 px-8 py-3 bg-indigo-500 text-white font-bold disabled:opacity-50 hover:bg-indigo-600 transition-all"
-      >
-        Start Quiz
-      </Button>
     </div>
   );
 }

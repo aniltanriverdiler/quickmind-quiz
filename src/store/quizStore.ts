@@ -21,6 +21,8 @@ type QuizStore = {
   // Selection
   selectedCategory: Category | null;
   selectedDifficulty: Difficulty | null;
+  setCategory: (category: Category) => void;
+  setDifficulty: (difficulty: Difficulty) => void;
 
   // Runtime state
   currentQuestion: number;
@@ -42,6 +44,8 @@ type QuizStore = {
 export const useQuizStore = create<QuizStore>((set, get) => ({
   selectedCategory: null,
   selectedDifficulty: null,
+  setCategory: (category) => set(() => ({ selectedCategory: category })),
+  setDifficulty: (difficulty) => set(() => ({ selectedDifficulty: difficulty })),
 
   currentQuestion: 0,
   score: 0,
