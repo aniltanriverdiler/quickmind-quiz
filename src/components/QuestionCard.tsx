@@ -9,6 +9,7 @@ function QuestionCard() {
   const {
     shuffledQuestions,
     currentQuestion,
+    score,
     answerQuestion,
     nextQuestion,
     skipQuestion,
@@ -84,9 +85,15 @@ function QuestionCard() {
     <div className="w-full max-w-xl bg-card shadow-md rounded-xl p-4 sm:p-6 space-y-6 mx-auto animate-fadeIn">
       {/* Header with Progress Bar & Timer */}
       <div className="flex justify-between items-center">
-        <h2 className="text-lg sm:text-xl font-semibold">
-          Question {currentQuestion + 1} / {shuffledQuestions.length}
-        </h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-lg sm:text-xl font-semibold">
+            Question {currentQuestion + 1} / {shuffledQuestions.length}
+          </h2>
+          {/* Score badge */}
+          <span className="text-xs sm:text-sm px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+            Score: {score}
+          </span>
+        </div>
         <span className="text-primary dark:text-gray-200 font-bold text-lg px-3 py-1 rounded-lg bg-primary/10 dark:bg-primary border border-primary/20 shadow-sm">
           {timeLeft}
         </span>

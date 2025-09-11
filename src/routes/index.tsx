@@ -3,6 +3,7 @@ import Layout from "../layout/Layout";
 import Home from "../pages/Home";
 import Quiz from "../pages/Quiz";
 import History from "../pages/History";
+import LevelPage from "../pages/LevelPage";
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ export const router = createBrowserRouter([
       {
         path: "history",
         element: <History />,
+      },
+      {
+        path: "level",
+        element: <LevelPage />,
       },
     ],
   },

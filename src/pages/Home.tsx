@@ -44,7 +44,10 @@ function Home() {
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row justify-center gap-4">
-        <Button className="px-6 py-3 text-lg" onClick={() => navigate("/quiz")}>
+        <Button
+          className="px-6 py-3 text-lg"
+          onClick={() => navigate("/level")}
+        >
           {" "}
           🚀 Start Quiz{" "}
         </Button>

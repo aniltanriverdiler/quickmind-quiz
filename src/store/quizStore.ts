@@ -1,10 +1,16 @@
 import { create } from "zustand";
-import { questions } from "../data/questions";
+import {
+  questions,
+  type Question,
+  type Category,
+  type Difficulty,
+} from "../data/questions";
 
 type AnswerStatus = "correct" | "wrong" | "skipped";
 
 type UserAnswer = {
-  questionId: number;
+  /** Index of the question in the current quiz set */
+  questionIndex: number;
   question: string;
   selectedAnswer?: string;
   correctAnswer: string;
@@ -12,12 +18,21 @@ type UserAnswer = {
 };
 
 type QuizStore = {
+  // Selection
+  selectedCategory: Category | null;
+  selectedDifficulty: Difficulty | null;
+
+  // Runtime state
   currentQuestion: number;
-  score: number;
+  score: number; // total points; also equals correctCount
+  correctCount: number; // kept explicitly per requirement
   wrongCount: number;
   skippedCount: number;
-  shuffledQuestions: typeof questions;
+  shuffledQuestions: Question[]; // questions for the chosen category & difficulty
   userAnswers: UserAnswer[];
+
+  // Actions
+  initializeQuiz: (category: Category, difficulty: Difficulty) => void;
   answerQuestion: (isCorrect: boolean, selectedAnswer: string) => void;
   nextQuestion: () => void;
   skipQuestion: () => void;
@@ -25,12 +40,33 @@ type QuizStore = {
 };
 
 export const useQuizStore = create<QuizStore>((set, get) => ({
+  selectedCategory: null,
+  selectedDifficulty: null,
+
   currentQuestion: 0,
   score: 0,
+  correctCount: 0,
   wrongCount: 0,
   skippedCount: 0,
-  shuffledQuestions: [...questions].sort(() => Math.random() - 0.5),
+  shuffledQuestions: [],
   userAnswers: [],
+
+  // Initialize quiz with selected category and difficulty
+  initializeQuiz: (category, difficulty) => {
+    const base = questions[category][difficulty] ?? [];
+    const shuffled = [...base].sort(() => Math.random() - 0.5);
+    set(() => ({
+      selectedCategory: category,
+      selectedDifficulty: difficulty,
+      currentQuestion: 0,
+      score: 0,
+      correctCount: 0,
+      wrongCount: 0,
+      skippedCount: 0,
+      shuffledQuestions: shuffled,
+      userAnswers: [],
+    }));
+  },
 
   // User answers a question (correct or wrong)
   answerQuestion: (isCorrect, selectedAnswer) => {
@@ -39,11 +75,12 @@ export const useQuizStore = create<QuizStore>((set, get) => ({
 
     set((state) => ({
       score: isCorrect ? state.score + 1 : state.score,
+      correctCount: isCorrect ? state.correctCount + 1 : state.correctCount,
       wrongCount: isCorrect ? state.wrongCount : state.wrongCount + 1,
       userAnswers: [
         ...userAnswers,
         {
-          questionId: currentQ.id,
+          questionIndex: currentQuestion,
           question: currentQ.question,
           selectedAnswer,
           correctAnswer: currentQ.correctAnswer,
@@ -68,7 +105,7 @@ export const useQuizStore = create<QuizStore>((set, get) => ({
       userAnswers: [
         ...userAnswers,
         {
-          questionId: currentQ.id,
+          questionIndex: currentQuestion,
           question: currentQ.question,
           correctAnswer: currentQ.correctAnswer,
           status: "skipped",
@@ -77,14 +114,32 @@ export const useQuizStore = create<QuizStore>((set, get) => ({
     }));
   },
 
-  // Reset quiz (start fresh)
-  resetQuiz: () =>
-    set(() => ({
-      currentQuestion: 0,
-      score: 0,
-      wrongCount: 0,
-      skippedCount: 0,
-      shuffledQuestions: [...questions].sort(() => Math.random() - 0.5),
-      userAnswers: [],
-    })),
+  // Reset quiz (start fresh). Keeps last selection, re-shuffles the same set if available.
+  resetQuiz: () => {
+    const { selectedCategory, selectedDifficulty } = get();
+    if (selectedCategory && selectedDifficulty) {
+      const base = questions[selectedCategory][selectedDifficulty] ?? [];
+      const shuffled = [...base].sort(() => Math.random() - 0.5);
+      set(() => ({
+        currentQuestion: 0,
+        score: 0,
+        correctCount: 0,
+        wrongCount: 0,
+        skippedCount: 0,
+        shuffledQuestions: shuffled,
+        userAnswers: [],
+      }));
+    } else {
+      // No selection yet; just clear state
+      set(() => ({
+        currentQuestion: 0,
+        score: 0,
+        correctCount: 0,
+        wrongCount: 0,
+        skippedCount: 0,
+        shuffledQuestions: [],
+        userAnswers: [],
+      }));
+    }
+  },
 }));

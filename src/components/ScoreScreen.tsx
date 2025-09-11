@@ -93,7 +93,7 @@ function ScoreScreen() {
               .filter((a) => a.status !== "correct")
               .map((a) => (
                 <Card
-                  key={a.questionId}
+                  key={a.questionIndex}
                   className="border shadow-sm rounded-lg p-3 bg-muted/60"
                 >
                   <CardContent>
