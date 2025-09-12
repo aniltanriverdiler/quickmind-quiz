@@ -43,9 +43,9 @@ function LevelSelection() {
     DifficultyKey,
     { label: string; color: string }
   > = {
-    easy: { label: "Easy", color: "bg-green-500" },
-    medium: { label: "Medium", color: "bg-yellow-500" },
-    hard: { label: "Hard", color: "bg-red-500" },
+    easy: { label: "Easy", color: "bg-green-400" },
+    medium: { label: "Medium", color: "bg-yellow-400" },
+    hard: { label: "Hard", color: "bg-red-400" },
   };
 
   const handleSelect = (

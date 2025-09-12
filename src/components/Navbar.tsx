@@ -61,7 +61,7 @@ function Navbar() {
                     className="text-gray-700 dark:text-gray-200"
                   >
                     <UserCheck className="w-6 h-6" strokeWidth={3} />
-                    {currentUser.name}
+                    {currentUser.name.split(" ")[0]}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-40">
