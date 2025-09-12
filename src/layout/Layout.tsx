@@ -10,7 +10,7 @@ function Layout() {
       <Navbar />
 
       {/* Main Content */}
-      <main className="flex-1 flex items-center justify-center p-6">
+      <main className="flex-1 flex items-center justify-center p-0">
         <Outlet />
       </main>
 

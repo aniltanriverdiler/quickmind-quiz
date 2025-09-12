@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import {
   Dialog,
   DialogClose,
@@ -7,7 +8,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
@@ -15,7 +15,7 @@ import { Input } from "./ui/input";
 import ModeToggle from "./ModeToggle";
 import { useAuthStore } from "../store/authStore";
 import { toast } from "sonner";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 import {
   DropdownMenu,
@@ -25,7 +25,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { LogOut, ScrollText, UserCheck } from "lucide-react";
+import { BrainCog, LogOut } from "lucide-react";
 import { Checkbox } from "./ui/checkbox";
 
 function Navbar() {
@@ -33,17 +33,27 @@ function Navbar() {
   const [openRegister, setOpenRegister] = useState(false);
 
   const { currentUser, login, logout } = useAuthStore();
-  const navigate = useNavigate();
+  const location = useLocation();
+  const isHome = location.pathname === "/";
 
   return (
-    <nav className="w-full bg-card dark:bg-background shadow-sm border-b border-border">
+    <nav
+      className={
+        `w-full sticky top-0 z-50 ` +
+        (isHome
+          ? "border-white/10 bg-transparent backdrop-blur-none"
+          : "border-white/10 bg-gradient-to-b from-background/70 to-background/20 backdrop-blur-md supports-[backdrop-filter]:bg-background/50")
+      }
+    >
       <div className="max-w-6xl mx-auto px-2 sm:px-4 py-2 sm:py-3 flex justify-between items-center">
         {/* Logo + App Name */}
         <div className="flex flex-row gap-2 items-center">
-          <img src="/brain.png" alt="brain" className="w-8 h-8" />
+          <NavLink to="/">
+            <BrainCog className="w-7 h-7 font-extrabold text-indigo-500 mt-1 drop-shadow" />
+          </NavLink>
           <NavLink
             to="/"
-            className="text-xl sm:text-2xl font-bold inline-block bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 text-transparent bg-clip-text hover:from-pink-500 hover:via-purple-500 hover:to-indigo-500 transition-all duration-500"
+            className="text-xl sm:text-2xl font-bold inline-block bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 text-transparent bg-clip-text hover:from-pink-500 hover:via-purple-500 hover:to-indigo-500 transition-all duration-500 drop-shadow-[0_1px_1px_rgba(0,0,0,0.4)]"
           >
             QuickMind
           </NavLink>
@@ -53,47 +63,142 @@ function Navbar() {
         <div className="flex items-center gap-3">
           {currentUser ? (
             <>
-              {/* Dropdown Menu for logged-in user */}
+              {/* Authenticated: primary nav links */}
+              <div className="hidden sm:flex items-center gap-2 text-sm font-semibold">
+                <NavLink
+                  to="/"
+                  className={({ isActive }) =>
+                    `px-3 py-2 rounded-md bg-white/10 backdrop-blur-md border border-white/20 ${
+                      isActive ? "text-white" : "text-white/80"
+                    } hover:text-white transition-colors`
+                  }
+                >
+                  Home
+                </NavLink>
+                <NavLink
+                  to="/history"
+                  className={({ isActive }) =>
+                    `px-3 py-2 rounded-md bg-white/10 backdrop-blur-md border border-white/20 ${
+                      isActive ? "text-white" : "text-white/80"
+                    } hover:text-white transition-colors`
+                  }
+                >
+                  Dashboard
+                </NavLink>
+                <NavLink
+                  to="/leaderboard"
+                  className={({ isActive }) =>
+                    `px-3 py-2 rounded-md bg-white/10 backdrop-blur-md border border-white/20 ${
+                      isActive ? "text-white" : "text-white/80"
+                    } hover:text-white transition-colors`
+                  }
+                >
+                  Leaderboard
+                </NavLink>
+                <NavLink
+                  to="/achievements"
+                  className={({ isActive }) =>
+                    `px-3 py-2 rounded-md bg-white/10 backdrop-blur-md border border-white/20 ${
+                      isActive ? "text-white" : "text-white/80"
+                    } hover:text-white transition-colors`
+                  }
+                >
+                  Achievements
+                </NavLink>
+                <NavLink
+                  to="/settings"
+                  className={({ isActive }) =>
+                    `px-3 py-2 rounded-md bg-white/10 backdrop-blur-md border border-white/20 ${
+                      isActive ? "text-white" : "text-white/80"
+                    } hover:text-white transition-colors`
+                  }
+                >
+                  Settings
+                </NavLink>
+                <NavLink
+                  to="/about"
+                  className={({ isActive }) =>
+                    `px-3 py-2 rounded-md bg-white/10 backdrop-blur-md border border-white/20 ${
+                      isActive ? "text-white" : "text-white/80"
+                    } hover:text-white transition-colors`
+                  }
+                >
+                  About/Help
+                </NavLink>
+              </div>
+
+              {/* Dropdown Menu for logged-in user: avatar + name */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="text-gray-700 dark:text-gray-200"
+                    className="text-white font-semibold hover:bg-white/10 "
                   >
-                    <UserCheck className="w-6 h-6" strokeWidth={3} />
-                    {currentUser.name.split(" ")[0]}
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-violet-900 text-white flex items-center justify-center font-semibold">
+                        {currentUser.name
+                          .split(" ")
+                          .map((n: string) => n[0])
+                          .slice(0, 2)
+                          .join("")}
+                      </div>
+                      <span>{currentUser.name.split(" ")[0]}</span>
+                    </div>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-40">
-                  <DropdownMenuLabel>Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-
-                  {/* History Link */}
-                  <DropdownMenuItem onClick={() => navigate("/history")}>
-                    <ScrollText className="w-6 h-6" strokeWidth={3} /> History
-                  </DropdownMenuItem>
-
-                  {/* Logout */}
+                <DropdownMenuContent
+                  align="center"
+                  className="w-44 backdrop-blur-md bg-white/10 border-white/20 rounded-lg"
+                >
+                  <DropdownMenuLabel className="text-white font-semibold">
+                    Account
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-white/20" />
                   <DropdownMenuItem
+                    className="text-white/80 hover:text-white hover:bg-white/10 focus:bg-white/10 focus:text-white cursor-pointer"
                     onClick={() => {
                       logout();
                       toast("👋 You have been logged out");
                     }}
                   >
-                    <LogOut className="w-6 h-6" strokeWidth={3} /> Logout
+                    <LogOut className="w-4 h-4 mr-2" strokeWidth={2} /> Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </>
           ) : (
             <>
-              {/* Login Dialog */}
-              <Dialog open={openLogin} onOpenChange={setOpenLogin}>
-                <DialogTrigger asChild>
-                  <Button variant="outline">Login</Button>
-                </DialogTrigger>
+              {/* Guest: primary nav links */}
+              <div className="flex items-center gap-2 text-sm">
+                <NavLink
+                  to="/"
+                  className={({ isActive }) =>
+                    `px-3 py-2 rounded-md bg-white/10 backdrop-blur-md border border-white/20 ${
+                      isActive ? "text-white" : "text-white/80"
+                    } hover:text-white transition-colors`
+                  }
+                >
+                  Home
+                </NavLink>
+                <NavLink
+                  to="#login"
+                  onClick={() => setOpenLogin(true)}
+                  className={`px-3 py-2 rounded-md bg-white/10 backdrop-blur-md border border-white/20 text-white/80 hover:text-white transition-colors`}
+                >
+                  Login
+                </NavLink>
+                <NavLink
+                  to="#register"
+                  onClick={() => setOpenRegister(true)}
+                  className={`px-3 py-2 rounded-md bg-white/10 backdrop-blur-md border border-white/20 text-white/80 hover:text-white transition-colors`}
+                >
+                  Register
+                </NavLink>
+              </div>
 
-                <DialogContent className="sm:max-w-[950px] p-0 overflow-hidden rounded-2xl">
+              {/* Login Dialog (opened via link) */}
+              <Dialog open={openLogin} onOpenChange={setOpenLogin}>
+                <DialogContent className="sm:max-w-[950px] p-0 overflow-hidden rounded-2xl bg-white/10 backdrop-blur-md border-white/20">
                   {/* Two column layout inspired by the provided mockup */}
                   <div className="grid grid-cols-1 md:grid-cols-2">
                     {/* Left: Image with subtle rounded frame */}
@@ -110,14 +215,14 @@ function Navbar() {
                     {/* Right: Form */}
                     <div className="p-6 sm:p-10">
                       <DialogHeader className="space-y-1 pt-12">
-                        <DialogTitle className="text-4xl font-semibold mb-2">
+                        <DialogTitle className="text-4xl font-semibold mb-2 text-white">
                           Log in
                         </DialogTitle>
-                        <DialogDescription>
+                        <DialogDescription className="text-white/80">
                           Don't have an account?{" "}
                           <button
                             type="button"
-                            className="text-primary underline underline-offset-4"
+                            className="text-blue-400 underline underline-offset-4 hover:text-blue-300 transition-colors"
                             onClick={() => {
                               // Close login, open register to mimic the example CTA
                               setOpenLogin(false);
@@ -156,22 +261,33 @@ function Navbar() {
                       >
                         {/* Email */}
                         <div className="grid gap-2">
-                          <Label htmlFor="email-login">Email Address</Label>
+                          <Label
+                            htmlFor="email-login"
+                            className="text-white font-semibold"
+                          >
+                            Email Address
+                          </Label>
                           <Input
                             id="email-login"
                             name="email"
                             type="email"
                             placeholder="john@example.com"
+                            className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40"
                           />
                         </div>
 
                         {/* Password + Forgot link */}
                         <div className="grid gap-2">
                           <div className="flex items-center justify-between">
-                            <Label htmlFor="password-login">Password</Label>
+                            <Label
+                              htmlFor="password-login"
+                              className="text-white font-semibold"
+                            >
+                              Password
+                            </Label>
                             <button
                               type="button"
-                              className="text-sm text-muted-foreground hover:text-foreground underline underline-offset-4"
+                              className="text-sm text-white/60 hover:text-white underline underline-offset-4 transition-colors"
                             >
                               Forgot Password?
                             </button>
@@ -181,16 +297,17 @@ function Navbar() {
                             name="password"
                             type="password"
                             placeholder="Enter your password"
+                            className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40"
                           />
                         </div>
 
                         {/* Terms checkbox mimic */}
-                        <label className="flex items-start gap-3 text-sm">
-                          <Checkbox className="mt-1 h-4 w-4 rounded border" />
+                        <label className="flex items-start gap-3 text-sm text-white/80">
+                          <Checkbox className="mt-1 h-4 w-4 rounded border-white/20 bg-white/10" />
                           <span>
                             I agree to the{" "}
                             <a
-                              className="underline underline-offset-4"
+                              className="underline underline-offset-4 text-blue-400 hover:text-blue-300 transition-colors"
                               href="#"
                             >
                               Terms & Condition
@@ -201,7 +318,7 @@ function Navbar() {
                         {/* Primary action */}
                         <Button
                           type="submit"
-                          className="w-full h-11 text-base mt-3"
+                          className="w-full h-11 text-base mt-3 bg-white/20 hover:bg-white/30 text-white border-white/30 hover:border-white/40 transition-all duration-200"
                         >
                           Log in
                         </Button>
@@ -209,10 +326,10 @@ function Navbar() {
                         {/* Divider */}
                         <div className="relative my-2">
                           <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t" />
+                            <span className="w-full border-t border-white/20" />
                           </div>
                           <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-background px-2 text-muted-foreground">
+                            <span className="bg-white/10 px-2 text-white/60">
                               or
                             </span>
                           </div>
@@ -223,7 +340,7 @@ function Navbar() {
                           <Button
                             type="button"
                             variant="outline"
-                            className="w-full px-2"
+                            className="w-full px-2 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all duration-200"
                           >
                             <img
                               src="/src/assets/google-icon.png"
@@ -235,7 +352,7 @@ function Navbar() {
                           <Button
                             type="button"
                             variant="outline"
-                            className="w-full px-2"
+                            className="w-full px-2 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all duration-200"
                           >
                             <img
                               src="/src/assets/facebook-icon.png"
@@ -247,11 +364,11 @@ function Navbar() {
                         </div>
 
                         {/* Secondary actions */}
-                        <div className="mt-2 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                        <div className="mt-2 flex items-center justify-center gap-2 text-sm text-white/60">
                           <span>Back to</span>
                           <button
                             type="button"
-                            className="underline underline-offset-4"
+                            className="underline underline-offset-4 text-blue-400 hover:text-blue-300 transition-colors"
                             onClick={() => setOpenLogin(false)}
                           >
                             Home
@@ -273,13 +390,9 @@ function Navbar() {
                 </DialogContent>
               </Dialog>
 
-              {/* Register Dialog */}
+              {/* Register Dialog (opened via link) */}
               <Dialog open={openRegister} onOpenChange={setOpenRegister}>
-                <DialogTrigger asChild>
-                  <Button variant="outline">Register</Button>
-                </DialogTrigger>
-
-                <DialogContent className="sm:max-w-[950px] p-0 overflow-hidden rounded-2xl">
+                <DialogContent className="sm:max-w-[950px] p-0 overflow-hidden rounded-2xl bg-white/10 backdrop-blur-md border-white/20">
                   {/* Two column layout to mirror login dialog */}
                   <div className="grid grid-cols-1 md:grid-cols-2">
                     {/* Left: Image */}
@@ -295,14 +408,14 @@ function Navbar() {
                     {/* Right: Form side */}
                     <div className="p-6 sm:p-10">
                       <DialogHeader className="space-y-1 pt-12">
-                        <DialogTitle className="text-4xl font-semibold mb-2">
+                        <DialogTitle className="text-4xl font-semibold mb-2 text-white">
                           Create an Account
                         </DialogTitle>
-                        <DialogDescription>
+                        <DialogDescription className="text-white/80">
                           Already have an account?{" "}
                           <button
                             type="button"
-                            className="text-primary underline underline-offset-4"
+                            className="text-blue-400 underline underline-offset-4 hover:text-blue-300 transition-colors"
                             onClick={() => {
                               // Close register, open login for quick switching
                               setOpenRegister(false);
@@ -351,52 +464,76 @@ function Navbar() {
                         {/* Name row */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div className="grid gap-2">
-                            <Label htmlFor="firstName">First Name</Label>
+                            <Label
+                              htmlFor="firstName"
+                              className="text-white font-semibold"
+                            >
+                              First Name
+                            </Label>
                             <Input
                               id="firstName"
                               name="firstName"
                               placeholder="John"
+                              className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40"
                             />
                           </div>
                           <div className="grid gap-2">
-                            <Label htmlFor="lastName">Last Name</Label>
+                            <Label
+                              htmlFor="lastName"
+                              className="text-white font-semibold"
+                            >
+                              Last Name
+                            </Label>
                             <Input
                               id="lastName"
                               name="lastName"
                               placeholder="Doe"
+                              className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40"
                             />
                           </div>
                         </div>
 
                         {/* Email */}
                         <div className="grid gap-2">
-                          <Label htmlFor="email-register">Email Address</Label>
+                          <Label
+                            htmlFor="email-register"
+                            className="text-white font-semibold"
+                          >
+                            Email Address
+                          </Label>
                           <Input
                             id="email-register"
                             name="email"
                             type="email"
                             placeholder="Email Address"
+                            className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40"
                           />
                         </div>
 
                         {/* Password */}
                         <div className="grid gap-2">
-                          <Label htmlFor="password-register">Password</Label>
+                          <Label
+                            htmlFor="password-register"
+                            className="text-white font-semibold"
+                          >
+                            Password
+                          </Label>
                           <Input
                             id="password-register"
                             name="password"
                             type="password"
                             placeholder="Password"
+                            className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40"
                           />
                         </div>
 
                         {/* Terms */}
-                        <label className="flex items-start gap-3 text-sm">
-                          <Checkbox className="mt-1 h-4 w-4 rounded border" />
+                        <label className="flex items-start gap-3 text-sm text-white/80">
+                          <Checkbox className="mt-1 h-4 w-4 rounded border-white/20 bg-white/10" />
                           <span>
                             I agree to the{" "}
                             <a
-                              className="underline underline-offset-4"
+                              className="underline underline-offset-4 text-blue-400 hover:text-blue-300 transition-colors"
                               href="#"
                             >
                               Terms & Condition
@@ -407,7 +544,7 @@ function Navbar() {
                         {/* Primary */}
                         <Button
                           type="submit"
-                          className="w-full h-11 text-base mt-3"
+                          className="w-full h-11 text-base mt-3 bg-white/20 hover:bg-white/30 text-white border-white/30 hover:border-white/40 transition-all duration-200"
                         >
                           Create Account
                         </Button>
@@ -415,10 +552,10 @@ function Navbar() {
                         {/* Divider */}
                         <div className="relative my-2">
                           <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t" />
+                            <span className="w-full border-t border-white/20" />
                           </div>
                           <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-background px-2 text-muted-foreground">
+                            <span className="bg-white/10 px-2 text-white/60">
                               or
                             </span>
                           </div>
@@ -429,7 +566,7 @@ function Navbar() {
                           <Button
                             type="button"
                             variant="outline"
-                            className="w-full px-2"
+                            className="w-full px-2 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all duration-200"
                           >
                             <img
                               src="/src/assets/google-icon.png"
@@ -441,7 +578,7 @@ function Navbar() {
                           <Button
                             type="button"
                             variant="outline"
-                            className="w-full px-2"
+                            className="w-full px-2 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all duration-200"
                           >
                             <img
                               src="/src/assets/facebook-icon.png"
