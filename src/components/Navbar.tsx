@@ -123,7 +123,7 @@ function Navbar() {
                     } hover:text-white transition-colors`
                   }
                 >
-                  About/Help
+                  About
                 </NavLink>
               </div>
 
@@ -199,6 +199,26 @@ function Navbar() {
               {/* Login Dialog (opened via link) */}
               <Dialog open={openLogin} onOpenChange={setOpenLogin}>
                 <DialogContent className="sm:max-w-[950px] p-0 overflow-hidden rounded-2xl bg-white/10 backdrop-blur-md border-white/20">
+                  {/* Close button */}
+                  <button
+                    onClick={() => setOpenLogin(false)}
+                    className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors"
+                    aria-label="Close dialog"
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
                   {/* Two column layout inspired by the provided mockup */}
                   <div className="grid grid-cols-1 md:grid-cols-2">
                     {/* Left: Image with subtle rounded frame */}
@@ -393,6 +413,26 @@ function Navbar() {
               {/* Register Dialog (opened via link) */}
               <Dialog open={openRegister} onOpenChange={setOpenRegister}>
                 <DialogContent className="sm:max-w-[950px] p-0 overflow-hidden rounded-2xl bg-white/10 backdrop-blur-md border-white/20">
+                  {/* Close button */}
+                  <button
+                    onClick={() => setOpenRegister(false)}
+                    className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors"
+                    aria-label="Close dialog"
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
                   {/* Two column layout to mirror login dialog */}
                   <div className="grid grid-cols-1 md:grid-cols-2">
                     {/* Left: Image */}
