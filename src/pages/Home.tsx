@@ -41,7 +41,13 @@ function Home() {
       {/* Video Background container should already be in page layout; we ensure content spacing */}
       <div className="relative z-20 text-center space-y-8 mt-10 sm:mt-14 px-2 animate-fadeIn">
         {/* Greeting Section */}
-        <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-cyan-400 via-emerald-400 to-yellow-400 inline-block text-transparent bg-clip-text drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]">
+        <h1
+          className="text-3xl sm:text-4xl lg:text-5xl font-bold 
+               bg-gradient-to-r from-blue-500 via-green-400 to-indigo-400 
+               inline-block text-transparent bg-clip-text 
+               drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] 
+               shadow-[0_0_20px_rgba(59,130,246,0.3)]"
+        >
           {currentUser
             ? `Welcome back, ${currentUser.name.split(" ")[0]}! 🎉`
             : "Welcome to QuickMind! 🧠"}
