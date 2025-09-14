@@ -1,20 +1,9 @@
-import { useLocation } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { BrainCog, Github, Twitter, Mail, Instagram } from "lucide-react";
 
 function Footer() {
-  const location = useLocation();
-  const isHome = location.pathname === "/";
-
   return (
-    <footer
-      className={
-        "w-full border-t relative z-30 " +
-        (isHome
-          ? "border-white/20 bg-black/20 backdrop-blur-sm"
-          : "border-white/10 bg-gradient-to-t from-background/70 to-background/20 backdrop-blur-md supports-[backdrop-filter]:bg-background/50")
-      }
-    >
+    <footer className="w-full border-t relative z-30 border-white/20 bg-black/20 backdrop-blur-sm">
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Desktop: 3 column layout */}
         <div className="hidden md:grid md:grid-cols-3 gap-8 mb-6">

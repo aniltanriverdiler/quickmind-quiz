@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
 import {
   Dialog,
   DialogClose,
@@ -33,18 +32,9 @@ function Navbar() {
   const [openRegister, setOpenRegister] = useState(false);
 
   const { currentUser, login, logout } = useAuthStore();
-  const location = useLocation();
-  const isHome = location.pathname === "/";
 
   return (
-    <nav
-      className={
-        `w-full sticky top-0 z-50 ` +
-        (isHome
-          ? "border-white/10 bg-transparent backdrop-blur-none"
-          : "border-white/10 bg-gradient-to-b from-background/70 to-background/20 backdrop-blur-md supports-[backdrop-filter]:bg-background/50")
-      }
-    >
+    <nav className="w-full sticky top-0 z-50 border-white/10 bg-transparent backdrop-blur-none">
       <div className="max-w-6xl mx-auto px-2 sm:px-4 py-2 sm:py-3 flex justify-between items-center">
         {/* Logo + App Name */}
         <div className="flex flex-row gap-2 items-center">
