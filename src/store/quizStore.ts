@@ -77,6 +77,16 @@ export const useQuizStore = create<QuizStore>((set, get) => ({
     const { currentQuestion, shuffledQuestions, userAnswers } = get();
     const currentQ = shuffledQuestions[currentQuestion];
 
+    // Guard clause: if no question available, just update counters
+    if (!currentQ) {
+      set((state) => ({
+        score: isCorrect ? state.score + 1 : state.score,
+        correctCount: isCorrect ? state.correctCount + 1 : state.correctCount,
+        wrongCount: isCorrect ? state.wrongCount : state.wrongCount + 1,
+      }));
+      return;
+    }
+
     set((state) => ({
       score: isCorrect ? state.score + 1 : state.score,
       correctCount: isCorrect ? state.correctCount + 1 : state.correctCount,
@@ -102,6 +112,15 @@ export const useQuizStore = create<QuizStore>((set, get) => ({
   skipQuestion: () => {
     const { currentQuestion, shuffledQuestions, userAnswers } = get();
     const currentQ = shuffledQuestions[currentQuestion];
+
+    // Guard clause: if no question available, just increment counter
+    if (!currentQ) {
+      set((state) => ({
+        skippedCount: state.skippedCount + 1,
+        currentQuestion: state.currentQuestion + 1,
+      }));
+      return;
+    }
 
     set((state) => ({
       skippedCount: state.skippedCount + 1,
