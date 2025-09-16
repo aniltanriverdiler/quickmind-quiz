@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useQuizStore } from "../store/quizStore";
+import { useQuizStore } from "../../store/quizStore";
 import {
   Card,
   CardContent,
@@ -7,8 +7,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./ui/card";
-import { Button } from "./ui/button";
+} from "../ui/card";
+import { Button } from "../ui/button";
 import { Brain, Book, Trophy, Lightbulb, Clock, Target, Star } from "lucide-react";
 
 function LevelSelection() {

@@ -4,6 +4,7 @@ import Home from "../pages/Home";
 import Quiz from "../pages/Quiz";
 import History from "../pages/History";
 import LevelPage from "../pages/LevelPage";
+import LeaderBoardPage from "../pages/LeaderBoardPage";
 
 export const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ export const router = createBrowserRouter([
         path: "level",
         element: <LevelPage />,
       },
+      {
+        path: "leaderboard",
+        element: <LeaderBoardPage />,
+      }
     ],
   },
 ]);

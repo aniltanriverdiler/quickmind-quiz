@@ -1,5 +1,5 @@
-import { useQuizStore } from "../store/quizStore";
-import { Button } from "./ui/button";
+import { useQuizStore } from "../../store/quizStore";
+import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
 import {
   Home,
@@ -27,10 +27,10 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
-} from "./ui/dialog";
+} from "../ui/dialog";
 import { DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
-import { Card, CardContent } from "./ui/card";
-import { useAuthStore } from "../store/authStore";
+import { Card, CardContent } from "../ui/card";
+import { useAuthStore } from "../../store/authStore";
 
 function ScoreScreen() {
   const { score, shuffledQuestions, userAnswers, resetQuiz } = useQuizStore();

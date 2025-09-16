@@ -1,4 +1,4 @@
-import QuestionCard from "../components/QuestionCard";
+import QuestionCard from "../components/quiz/QuestionCard";
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { type Category, type Difficulty } from "../data/questions";

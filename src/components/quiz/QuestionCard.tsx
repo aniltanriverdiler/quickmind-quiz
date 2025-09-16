@@ -1,7 +1,7 @@
 import ScoreScreen from "./ScoreScreen";
 import { useEffect, useState, useCallback } from "react";
-import { useQuizStore } from "../store/quizStore";
-import { Button } from "./ui/button";
+import { useQuizStore } from "../../store/quizStore";
+import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
 import {
   RefreshCw,
