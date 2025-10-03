@@ -32,6 +32,7 @@ import { DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
 import { Card, CardContent } from "../ui/card";
 import { useAuthStore } from "../../store/authStore";
 import { useLeaderboardStore } from "../../store/leader";
+import { useAchievements } from "../../store/achievements";
 
 function ScoreScreen() {
   const { score, shuffledQuestions, userAnswers, resetQuiz } = useQuizStore();
@@ -101,6 +102,7 @@ function ScoreScreen() {
       const storageKey = `quizHistory_${currentUser.email}`;
       const history = JSON.parse(localStorage.getItem(storageKey) || "[]");
 
+      const { selectedCategory, selectedDifficulty } = useQuizStore.getState();
       const newResult = {
         date: new Date().toLocaleString(),
         score,
@@ -109,6 +111,8 @@ function ScoreScreen() {
         skippedQuestions,
         percentage,
         performanceLevel: performance.level,
+        category: selectedCategory ?? null,
+        difficulty: selectedDifficulty ?? null,
       };
 
       localStorage.setItem(storageKey, JSON.stringify([...history, newResult]));
@@ -128,9 +132,32 @@ function ScoreScreen() {
 
       addScore(displayName, safeScore, safePercentage);
 
-      toast.success(
-        "Your results have been saved and added to leaderboard!"
-      );
+      // Evaluate achievements
+      const name = displayName;
+      const rank = useLeaderboardStore.getState().getUserRank(name);
+      const results = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      const newlyUnlocked = useAchievements.getState().evaluateAll({ results, rank });
+      
+      // Show success toast
+      toast.success("Your results have been saved and added to leaderboard!");
+      
+      // Show achievement unlock notifications
+      if (newlyUnlocked.length > 0) {
+        setTimeout(() => {
+          newlyUnlocked.forEach((id, index) => {
+            const achievement = useAchievements.getState().list[id];
+            setTimeout(() => {
+              toast.success(
+                `🏆 Achievement Unlocked: ${achievement.icon} ${achievement.title}`,
+                {
+                  duration: 4000,
+                  description: achievement.description,
+                }
+              );
+            }, index * 500);
+          });
+        }, 500);
+      }
     } catch (error) {
       console.error("Error saving results:", error);
       toast.error("❌ Failed to save results. Please try again.");
