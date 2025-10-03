@@ -31,6 +31,7 @@ import {
 import { DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
 import { Card, CardContent } from "../ui/card";
 import { useAuthStore } from "../../store/authStore";
+import { useLeaderboardStore } from "../../store/leader";
 
 function ScoreScreen() {
   const { score, shuffledQuestions, userAnswers, resetQuiz } = useQuizStore();
@@ -88,28 +89,52 @@ function ScoreScreen() {
     return <BookOpen className="w-7 h-7 text-muted-foreground" />;
   };
 
-  // Save results (LocalStorage)
+  // Save results (LocalStorage and Leaderboard)
   const handleSaveResults = () => {
     if (!currentUser) {
       toast.error("⚠️ Please login to save your results!");
       return;
     }
 
-    const storageKey = `quizHistory_${currentUser.email}`;
-    const history = JSON.parse(localStorage.getItem(storageKey) || "[]");
+    try {
+      // Save to quiz history
+      const storageKey = `quizHistory_${currentUser.email}`;
+      const history = JSON.parse(localStorage.getItem(storageKey) || "[]");
 
-    const newResult = {
-      date: new Date().toLocaleString(),
-      score,
-      totalQuestions,
-      wrongAnswers,
-      skippedQuestions,
-      percentage,
-      performanceLevel: performance.level,
-    };
+      const newResult = {
+        date: new Date().toLocaleString(),
+        score,
+        totalQuestions,
+        wrongAnswers,
+        skippedQuestions,
+        percentage,
+        performanceLevel: performance.level,
+      };
 
-    localStorage.setItem(storageKey, JSON.stringify([...history, newResult]));
-    toast.success("✅ Your results have been saved!");
+      localStorage.setItem(storageKey, JSON.stringify([...history, newResult]));
+
+      // Add to leaderboard with validation
+      const addScore = useLeaderboardStore.getState().addScore;
+      const displayName =
+        (currentUser.name && currentUser.name.trim()) ||
+        currentUser.email.split("@")[0] ||
+        "Anonymous";
+
+      const safeScore = Number.isFinite(score) && score >= 0 ? score : 0;
+      const safePercentage =
+        Number.isFinite(percentage) && percentage >= 0 && percentage <= 100
+          ? percentage
+          : 0;
+
+      addScore(displayName, safeScore, safePercentage);
+
+      toast.success(
+        "Your results have been saved and added to leaderboard!"
+      );
+    } catch (error) {
+      console.error("Error saving results:", error);
+      toast.error("❌ Failed to save results. Please try again.");
+    }
   };
 
   // Copy results to clipboard

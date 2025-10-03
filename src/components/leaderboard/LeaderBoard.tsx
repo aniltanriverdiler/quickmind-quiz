@@ -99,7 +99,9 @@ function LeaderBoard() {
 
   // Initialize data if empty
   React.useEffect(() => {
-    initializeData();
+    if (import.meta.env.DEV) {
+      initializeData();
+    }
   }, [initializeData]);
 
   // Filtered and searched leaderboard
@@ -250,7 +252,7 @@ function LeaderBoard() {
           Top performing players worldwide
         </p>
         {currentUser && currentUserRank && (
-          <p className="text-lg text-blue-300 font-semibold">
+          <p className="text-lg text-white/90 font-semibold">
             Your rank: #{currentUserRank}
           </p>
         )}
@@ -481,7 +483,7 @@ function LeaderBoard() {
               >
                 <div className="text-center">
                   <p
-                    className={`font-bold text-sm text-white ${
+                    className={`font-bold text-sm mt-6 text-white ${
                       isCurrentUser ? "text-blue-200" : ""
                     }`}
                   >
@@ -510,13 +512,13 @@ function LeaderBoard() {
         <CardContent>
           <div className="space-y-2">
             {/* Show all players with rankings */}
-            {leaderboard.map((player, index) => {
-              const rank = index + 1;
+            {filteredLeaderboard.map((player, index) => {
+              const rank = leaderboard.findIndex((u) => u.id === player.id) + 1;
               const isCurrentUser =
                 currentUser && player.username === currentUser.name;
 
               // Skip top 3 if showing them in podium
-              if (rank <= 3) return null;
+              if (index < 3) return null;
 
               return (
                 <LeaderboardItem

@@ -16,18 +16,20 @@ type LeaderboardState = {
   leaderboard: LeaderboardUser[];
   addScore: (username: string, score: number, percentage: number) => void;
   initializeData: () => void;
+  getUserRank: (username: string) => number | null;
+  clearLeaderboard: () => void;
 };
 
-// Dummy data to populate the leaderboard initially
+// Dummy data to populate the leaderboard initially (scores out of 10)
 const DUMMY_USERS = [
-  { username: "TechWizard", score: 95, percentage: 95 },
-  { username: "CodeNinja", score: 90, percentage: 90 },
-  { username: "TriviaKing", score: 85, percentage: 85 },
-  { username: "Mastermind", score: 80, percentage: 80 },
-  { username: "Genius", score: 75, percentage: 75 },
-  { username: "ProCoder", score: 70, percentage: 70 },
-  { username: "CodeGuru", score: 65, percentage: 65 },
-  { username: "QuizQueen", score: 60, percentage: 60 },
+  { username: "TechWizard", score: 10, percentage: 100 },
+  { username: "CodeNinja", score: 9, percentage: 90 },
+  { username: "TriviaKing", score: 9, percentage: 90 },
+  { username: "Mastermind", score: 8, percentage: 80 },
+  { username: "Genius", score: 8, percentage: 80 },
+  { username: "ProCoder", score: 7, percentage: 70 },
+  { username: "CodeGuru", score: 7, percentage: 70 },
+  { username: "QuizQueen", score: 6, percentage: 60 },
 ];
 
 export const useLeaderboardStore = create(
@@ -38,30 +40,67 @@ export const useLeaderboardStore = create(
       // Adds a new score entry to the leaderboard
       addScore: (username, score, percentage) => {
         set((state) => {
+          const existing = state.leaderboard.find(
+            (u) => u.username === username
+          );
           const newEntry: LeaderboardUser = {
-            id: nanoid(),
+            id: existing?.id ?? nanoid(),
             username,
-            avatarUrl: "",
-            score,
-            percentage,
+            avatarUrl: existing?.avatarUrl ?? "",
+            score: existing ? Math.max(existing.score, score) : score,
+            percentage: existing
+              ? Math.max(existing.percentage, percentage)
+              : percentage,
           };
-          // Create a new array with the new entry and sort it by score
-          const updatedList = [...state.leaderboard, newEntry].sort(
-            (a, b) => b.score - a.score
+          // Remove existing entry if it exists
+          const others = state.leaderboard.filter(
+            (u) => u.username !== username
+          );
+          // Add new entry and sort by percentage first, then by score
+          const updatedList = [...others, newEntry].sort(
+            (a, b) => {
+              // Primary sort: percentage (descending)
+              if (b.percentage !== a.percentage) {
+                return b.percentage - a.percentage;
+              }
+              // Secondary sort: score (descending)
+              return b.score - a.score;
+            }
           );
           return { leaderboard: updatedList };
         });
       },
 
-      // Populates the leaderboard with dummy data if it's empty
+      // Populates the leaderboard with dummy data if it's empty (development only)
       initializeData: () => {
         if (get().leaderboard.length === 0) {
           const initialData: LeaderboardUser[] = DUMMY_USERS.map((user) => ({
             ...user,
             id: nanoid(),
-          })).sort((a, b) => b.score - a.score);
+            avatarUrl: "",
+          })).sort((a, b) => {
+            // Primary sort: percentage (descending)
+            if (b.percentage !== a.percentage) {
+              return b.percentage - a.percentage;
+            }
+            // Secondary sort: score (descending)
+            return b.score - a.score;
+          });
           set({ leaderboard: initialData });
         }
+      },
+
+      // Gets the rank of a specific user by username
+      getUserRank: (username) => {
+        const index = get().leaderboard.findIndex(
+          (user) => user.username === username
+        );
+        return index !== -1 ? index + 1 : null;
+      },
+
+      // Clears all leaderboard data
+      clearLeaderboard: () => {
+        set({ leaderboard: [] });
       },
     }),
     {
