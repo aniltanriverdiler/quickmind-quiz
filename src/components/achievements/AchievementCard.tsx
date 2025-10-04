@@ -9,9 +9,22 @@ type Props = {
   unlockedAt?: string;
 };
 
-export function AchievementCard({ title, description, rarity, unlocked, progress, unlockedAt }: Props) {
+export function AchievementCard({
+  title,
+  description,
+  rarity,
+  unlocked,
+  progress,
+  unlockedAt,
+}: Props) {
   return (
-    <Card className={`rounded-xl ${unlocked ? "bg-emerald-500/10 border-emerald-400/30" : "bg-white/5 border-white/15"}`}>
+    <Card
+      className={`rounded-xl ${
+        unlocked
+          ? "bg-emerald-500/10 border-emerald-400/30"
+          : "bg-white/5 border-white/15"
+      }`}
+    >
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-2">
           <div className="text-white font-semibold">{title}</div>
@@ -22,11 +35,18 @@ export function AchievementCard({ title, description, rarity, unlocked, progress
         <div className="text-white/80 text-sm mb-3">{description}</div>
         {typeof progress === "number" && (
           <div className="w-full h-2 bg-white/10 rounded">
-            <div className={`h-2 rounded ${unlocked ? "bg-emerald-400" : "bg-white/40"}`} style={{ width: `${Math.round(progress * 100)}%` }} />
+            <div
+              className={`h-2 rounded ${
+                unlocked ? "bg-emerald-400" : "bg-white/40"
+              }`}
+              style={{ width: `${Math.round(progress * 100)}%` }}
+            />
           </div>
         )}
         {unlocked && unlockedAt && (
-          <div className="text-[11px] text-white/50 mt-2">Unlocked at: {new Date(unlockedAt).toLocaleString()}</div>
+          <div className="text-[11px] text-white/50 mt-2">
+            Unlocked at: {new Date(unlockedAt).toLocaleString()}
+          </div>
         )}
       </CardContent>
     </Card>

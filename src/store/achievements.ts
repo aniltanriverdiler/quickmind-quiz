@@ -244,11 +244,11 @@ export const useAchievements = create(
         if (total >= 1) unlock("first_quiz");
         if (ctx.results.some((r) => r.percentage >= 50)) unlock("first_win");
         if (ctx.results.some((r) => r.percentage === 100)) unlock("perfect");
-        
+
         // Comeback: Compare last 2 quizzes
         if (total >= 2) {
-          const sorted = [...ctx.results].sort((a, b) => 
-            new Date(b.date).getTime() - new Date(a.date).getTime()
+          const sorted = [...ctx.results].sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
           );
           const latest = sorted[0];
           const previous = sorted[1];
@@ -260,42 +260,48 @@ export const useAchievements = create(
         // Performance-focused
         // Consistency: Son 3 quiz ≥70%
         if (total >= 3) {
-          const sorted = [...ctx.results].sort((a, b) => 
-            new Date(b.date).getTime() - new Date(a.date).getTime()
+          const sorted = [...ctx.results].sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
           );
           const lastThree = sorted.slice(0, 3);
           const consecutive = lastThree.every((r) => r.percentage >= 70);
-          updated["consistency"].progress = consecutive ? 1 : lastThree.filter(r => r.percentage >= 70).length / 3;
+          updated["consistency"].progress = consecutive
+            ? 1
+            : lastThree.filter((r) => r.percentage >= 70).length / 3;
           if (consecutive) unlock("consistency");
         }
-        
+
         if (ctx.results.some((r) => r.percentage >= 80)) unlock("accuracy_80");
         if (ctx.results.some((r) => r.percentage >= 90)) unlock("accuracy_90");
 
         // Volume/progress
         updated["rookie"].progress = Math.min(total / 5, 1);
         if (total >= 5) unlock("rookie");
-        
+
         updated["regular"].progress = Math.min(total / 20, 1);
         if (total >= 20) unlock("regular");
-        
+
         updated["grinder"].progress = Math.min(total / 50, 1);
         if (total >= 50) unlock("grinder");
-        
+
         const totalCorrect = ctx.results.reduce((sum, r) => sum + r.score, 0);
         updated["thousand_club"].progress = Math.min(totalCorrect / 1000, 1);
         if (totalCorrect >= 1000) unlock("thousand_club");
 
         // Category/difficulty
-        const hardQuizzes = ctx.results.filter((r) => 
-          r.difficulty === "hard" && r.percentage >= 70
+        const hardQuizzes = ctx.results.filter(
+          (r) => r.difficulty === "hard" && r.percentage >= 70
         );
-        updated["difficulty_hard"].progress = Math.min(hardQuizzes.length / 3, 1);
+        updated["difficulty_hard"].progress = Math.min(
+          hardQuizzes.length / 3,
+          1
+        );
         if (hardQuizzes.length >= 3) unlock("difficulty_hard");
 
         // Behavior/streak
-        if (ctx.results.some((r) => r.skippedQuestions === 0)) unlock("no_skip");
-        
+        if (ctx.results.some((r) => r.skippedQuestions === 0))
+          unlock("no_skip");
+
         // Streak calculation
         const days = new Set(
           ctx.results.map((r) => new Date(r.date).toDateString())
@@ -317,14 +323,14 @@ export const useAchievements = create(
           }
           return maxStreak;
         };
-        
+
         const streak = calculateStreak();
         updated["streak_3"].progress = Math.min(streak / 3, 1);
         if (streak >= 3) unlock("streak_3");
-        
+
         updated["streak_7"].progress = Math.min(streak / 7, 1);
         if (streak >= 7) unlock("streak_7");
-        
+
         updated["streak_14"].progress = Math.min(streak / 14, 1);
         if (streak >= 14) unlock("streak_14");
 
@@ -336,7 +342,7 @@ export const useAchievements = create(
         set({ list: updated });
         return unlocked;
       },
-      
+
       reset: () => {
         const initialList = get().list;
         const resetList = Object.keys(initialList).reduce((acc, key) => {

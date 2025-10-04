@@ -1,16 +1,34 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { Search, Trophy, Lock, Unlock, RotateCcw } from "lucide-react";
+import {
+  Search,
+  Trophy,
+  Lock,
+  Unlock,
+  RotateCcw,
+  AlertTriangle,
+} from "lucide-react";
 import { useAuthStore } from "../store/authStore";
 import { useAchievements } from "../store/achievements";
 import { useLeaderboardStore } from "../store/leader";
 import bgVideo from "../assets/color-smoke-14.mp4";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../components/ui/alert-dialog";
 
 type Rarity = "common" | "rare" | "epic" | "legendary";
-type FilterTab = "all" | "unlocked" | "locked";
+type FilterTab = "all" | "unlocked" | "locked" | "inprogress";
 
 function AchievementsPage() {
   const { currentUser } = useAuthStore();
@@ -20,21 +38,94 @@ function AchievementsPage() {
   const [search, setSearch] = useState("");
   const [tab, setTab] = useState<FilterTab>("all");
   const [rarity, setRarity] = useState<Rarity | "all">("all");
+  const [sortBy, setSortBy] = useState<
+    "unlocked" | "title" | "rarity" | "date" | "progress"
+  >("unlocked");
+
+  // URL Search Params
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    setTab((params.get("tab") as FilterTab) || "all");
+    setRarity((params.get("rarity") as Rarity | "all") || "all");
+    setSortBy(
+      (params.get("sort") as
+        | "unlocked"
+        | "title"
+        | "rarity"
+        | "date"
+        | "progress") || "unlocked"
+    );
+    setSearch(params.get("q") || "");
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    params.set("tab", tab);
+    params.set("rarity", rarity);
+    params.set("sort", sortBy);
+    if (search) params.set("q", search);
+    window.history.replaceState({}, "", `?${params.toString()}`);
+  }, [tab, rarity, sortBy, search]);
 
   const items = useMemo(() => Object.values(list), [list]);
 
+  // Calculate Counts
+  const counts = useMemo(() => {
+    return items.reduce(
+      (acc, a) => {
+        acc.all++;
+        acc[a.rarity] = (acc[a.rarity] || 0) + 1;
+        return acc;
+      },
+      { all: 0, common: 0, rare: 0, epic: 0, legendary: 0 } as Record<
+        string,
+        number
+      >
+    );
+  }, [items]);
+
   const filtered = useMemo(() => {
-    return items
-      .filter((a) => (tab === "unlocked" ? a.unlocked : tab === "locked" ? !a.unlocked : true))
+    const data = items
+      .filter((a) => {
+        if (tab === "unlocked") return a.unlocked;
+        if (tab === "locked") return !a.unlocked;
+        if (tab === "inprogress")
+          return (
+            typeof a.progress === "number" && a.progress > 0 && a.progress < 1
+          );
+        return true;
+      })
       .filter((a) => (rarity === "all" ? true : a.rarity === rarity))
       .filter((a) =>
-        search ? (a.title + " " + a.description).toLowerCase().includes(search.toLowerCase()) : true
+        search
+          ? (a.title + " " + a.description)
+              .toLowerCase()
+              .includes(search.toLowerCase())
+          : true
       );
-  }, [items, tab, rarity, search]);
+
+    return data.sort((a, b) => {
+      if (sortBy === "unlocked")
+        return (b.unlocked ? 1 : 0) - (a.unlocked ? 1 : 0);
+      if (sortBy === "title") return a.title.localeCompare(b.title);
+      if (sortBy === "rarity")
+        return (
+          ["common", "rare", "epic", "legendary"].indexOf(a.rarity) -
+          ["common", "rare", "epic", "legendary"].indexOf(b.rarity)
+        );
+      if (sortBy === "date")
+        return (
+          new Date(b.unlockedAt || 0).getTime() -
+          new Date(a.unlockedAt || 0).getTime()
+        );
+      if (sortBy === "progress") return (b.progress || 0) - (a.progress || 0);
+      return 0;
+    });
+  }, [items, tab, rarity, search, sortBy]);
 
   const unlockedCount = items.filter((a) => a.unlocked).length;
 
-  const handleEvaluate = () => {
+  const handleEvaluate = useCallback(() => {
     if (!currentUser) {
       toast.error("Please login to evaluate achievements!");
       return;
@@ -49,13 +140,50 @@ function AchievementsPage() {
     } else {
       toast.info("No new achievements unlocked");
     }
-  };
+  }, [currentUser, evaluateAll, getUserRank]);
 
-  const handleReset = () => {
+  // Reset achievements
+  const handleReset = useCallback(() => {
     if (!currentUser) return;
     reset();
     toast.success("Achievements reset!");
-  };
+  }, [currentUser, reset]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (event: globalThis.KeyboardEvent) => {
+      if ((event.target as HTMLElement)?.tagName === "INPUT") return;
+
+      switch (event.key.toLowerCase()) {
+        case "/":
+          event.preventDefault();
+          document
+            .querySelector<HTMLInputElement>(
+              'input[placeholder="Search achievements..."]'
+            )
+            ?.focus();
+          break;
+        case "e":
+          handleEvaluate();
+          break;
+        case "r":
+          handleReset();
+          break;
+        case "a":
+          setTab("all");
+          break;
+        case "u":
+          setTab("unlocked");
+          break;
+        case "l":
+          setTab("locked");
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [handleEvaluate, handleReset]);
 
   const getRarityColor = (rarity: Rarity) => {
     switch (rarity) {
@@ -97,7 +225,7 @@ function AchievementsPage() {
       />
       {/* Overlay for readability */}
       <div className="fixed inset-0 z-10 bg-gradient-to-b from-black/20 via-black/35 to-black/60" />
-      
+
       {/* Content */}
       <div className="relative z-20 max-w-6xl mx-auto pt-8 sm:pt-10 pb-8 p-4 sm:p-6 space-y-6 animate-fadeIn">
         {/* Header */}
@@ -164,23 +292,74 @@ function AchievementsPage() {
                 <Lock className="w-4 h-4 mr-1" />
                 Locked ({items.length - unlockedCount})
               </Button>
+              <Button
+                variant={tab === "inprogress" ? "default" : "outline"}
+                onClick={() => setTab("inprogress")}
+                className={`shadow-sm ${
+                  tab === "inprogress"
+                    ? "bg-yellow-500/25 text-yellow-200 border-yellow-400/60"
+                    : "bg-white/15 text-white/85 border-white/30 hover:bg-white/25"
+                }`}
+                size="sm"
+              >
+                In Progress (
+                {
+                  items.filter(
+                    (a) =>
+                      typeof a.progress === "number" &&
+                      a.progress > 0 &&
+                      a.progress < 1
+                  ).length
+                }
+                )
+              </Button>
             </div>
 
             {/* Rarity Filters */}
             <div className="flex flex-wrap gap-2">
-              {(["all", "common", "rare", "epic", "legendary"] as const).map((r) => (
+              <span className="text-white/70 text-sm self-center mr-2">
+                Rarity:
+              </span>
+              {(["all", "common", "rare", "epic", "legendary"] as const).map(
+                (r) => (
+                  <Button
+                    key={r}
+                    variant={rarity === r ? "default" : "outline"}
+                    onClick={() => setRarity(r)}
+                    className={`shadow-sm ${
+                      rarity === r
+                        ? "bg-purple-500/25 text-purple-200 border-purple-400/60"
+                        : "bg-white/15 text-white/85 border-white/30 hover:bg-white/25"
+                    }`}
+                    size="sm"
+                  >
+                    {r.charAt(0).toUpperCase() + r.slice(1)} (
+                    {r === "all" ? counts.all : counts[r]})
+                  </Button>
+                )
+              )}
+            </div>
+
+            {/* Sort Options */}
+            <div className="flex flex-wrap gap-2">
+              <span className="text-white/70 text-sm self-center mr-2">
+                Sort by:
+              </span>
+              {(
+                ["unlocked", "title", "rarity", "date", "progress"] as const
+              ).map((s) => (
                 <Button
-                  key={r}
-                  variant={rarity === r ? "default" : "outline"}
-                  onClick={() => setRarity(r)}
+                  key={s}
+                  variant={sortBy === s ? "default" : "outline"}
+                  onClick={() => setSortBy(s)}
                   className={`shadow-sm ${
-                    rarity === r
-                      ? "bg-purple-500/25 text-purple-200 border-purple-400/60"
+                    sortBy === s
+                      ? "bg-blue-500/25 text-blue-200 border-blue-400/60"
                       : "bg-white/15 text-white/85 border-white/30 hover:bg-white/25"
                   }`}
                   size="sm"
                 >
-                  {r.charAt(0).toUpperCase() + r.slice(1)}
+                  {s.charAt(0).toUpperCase() + s.slice(1)}
                 </Button>
               ))}
             </div>
@@ -196,15 +375,88 @@ function AchievementsPage() {
                 <Trophy className="w-4 h-4 mr-2" />
                 Evaluate Progress
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleReset}
-                className="bg-white/15 text-white/85 border-white/30 hover:bg-white/25 shadow-sm"
-              >
-                <RotateCcw className="w-4 h-4 mr-2" />
-                Reset
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-white/15 text-white/85 border-white/30 hover:bg-white/25 shadow-sm"
+                  >
+                    <RotateCcw className="w-4 h-4 mr-2" />
+                    Reset
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="bg-white/10 backdrop-blur-md border border-white/20 shadow-lg">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="flex items-center gap-2 text-white">
+                      <AlertTriangle className="w-5 h-5 text-orange-400" />
+                      Reset Achievements
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="text-white/80">
+                      Are you sure you want to reset all achievements? This
+                      action cannot be undone and will:
+                      <ul className="mt-2 space-y-1 text-sm">
+                        <li>• Unlock all achievements</li>
+                        <li>• Reset all progress to 0</li>
+                        <li>• Clear unlock dates</li>
+                      </ul>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="bg-white/15 text-white/85 border-white/30 hover:bg-white/25">
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleReset}
+                      className="bg-red-500/20 text-red-200 border-red-400/30 hover:bg-red-500/30 hover:border-red-400/50"
+                    >
+                      <RotateCcw className="w-4 h-4 mr-2" />
+                      Reset All
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+
+            {/* Keyboard Shortcuts Info */}
+            <div className="text-xs text-white/50 space-x-4 pt-2 border-t border-white/10">
+              <span>
+                Press{" "}
+                <kbd className="bg-white/15 px-1.5 py-0.5 rounded text-white/70">
+                  /
+                </kbd>{" "}
+                to search
+              </span>
+              <span>
+                <kbd className="bg-white/15 px-1.5 py-0.5 rounded text-white/70">
+                  E
+                </kbd>{" "}
+                evaluate
+              </span>
+              <span>
+                <kbd className="bg-white/15 px-1.5 py-0.5 rounded text-white/70">
+                  R
+                </kbd>{" "}
+                reset
+              </span>
+              <span>
+                <kbd className="bg-white/15 px-1.5 py-0.5 rounded text-white/70">
+                  A
+                </kbd>{" "}
+                all
+              </span>
+              <span>
+                <kbd className="bg-white/15 px-1.5 py-0.5 rounded text-white/70">
+                  U
+                </kbd>{" "}
+                unlocked
+              </span>
+              <span>
+                <kbd className="bg-white/15 px-1.5 py-0.5 rounded text-white/70">
+                  L
+                </kbd>{" "}
+                locked
+              </span>
             </div>
           </CardContent>
         </Card>
@@ -237,7 +489,9 @@ function AchievementsPage() {
                     <div className="flex items-center gap-2">
                       <span className="text-3xl">{a.icon}</span>
                       <div className="flex-1">
-                        <h3 className="text-white font-bold text-lg">{a.title}</h3>
+                        <h3 className="text-white font-bold text-lg">
+                          {a.title}
+                        </h3>
                       </div>
                     </div>
                     {a.unlocked ? (
@@ -259,7 +513,9 @@ function AchievementsPage() {
                   </div>
 
                   {/* Description */}
-                  <p className="text-white/80 text-sm leading-relaxed">{a.description}</p>
+                  <p className="text-white/80 text-sm leading-relaxed">
+                    {a.description}
+                  </p>
 
                   {/* Progress Bar */}
                   {typeof a.progress === "number" && a.target && (
@@ -277,7 +533,9 @@ function AchievementsPage() {
                               ? "bg-gradient-to-r from-green-400 to-emerald-500"
                               : "bg-gradient-to-r from-blue-400 to-cyan-500"
                           }`}
-                          style={{ width: `${Math.round((a.progress || 0) * 100)}%` }}
+                          style={{
+                            width: `${Math.round((a.progress || 0) * 100)}%`,
+                          }}
                         />
                       </div>
                       <div className="text-right text-xs text-white/60">
@@ -285,6 +543,19 @@ function AchievementsPage() {
                       </div>
                     </div>
                   )}
+
+                  {/* Next Milestone */}
+                  {a.target &&
+                    typeof a.progress === "number" &&
+                    !a.unlocked && (
+                      <div className="text-xs text-white/70 mt-1">
+                        {Math.max(
+                          0,
+                          a.target - Math.round(a.progress * a.target)
+                        )}{" "}
+                        to go
+                      </div>
+                    )}
 
                   {/* Unlock Status */}
                   {!a.progress && (

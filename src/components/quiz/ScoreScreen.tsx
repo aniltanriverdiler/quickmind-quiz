@@ -136,11 +136,13 @@ function ScoreScreen() {
       const name = displayName;
       const rank = useLeaderboardStore.getState().getUserRank(name);
       const results = JSON.parse(localStorage.getItem(storageKey) || "[]");
-      const newlyUnlocked = useAchievements.getState().evaluateAll({ results, rank });
-      
+      const newlyUnlocked = useAchievements
+        .getState()
+        .evaluateAll({ results, rank });
+
       // Show success toast
       toast.success("Your results have been saved and added to leaderboard!");
-      
+
       // Show achievement unlock notifications
       if (newlyUnlocked.length > 0) {
         setTimeout(() => {
