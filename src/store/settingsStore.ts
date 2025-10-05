@@ -31,23 +31,23 @@ type SettingsState = {
   // Theme
   theme: ThemeMode;
   colorPalette: string;
-  
+
   // Quiz Settings
   quizSettings: QuizSettings;
-  
+
   // Notifications
   notifications: NotificationSettings;
-  
+
   // User Profile
   userProfile: UserProfile;
-  
+
   // Actions
   setTheme: (theme: ThemeMode) => void;
   setColorPalette: (palette: string) => void;
   updateQuizSettings: (settings: Partial<QuizSettings>) => void;
   updateNotifications: (settings: Partial<NotificationSettings>) => void;
   updateUserProfile: (profile: Partial<UserProfile>) => void;
-  
+
   // Data Management
   exportData: () => string;
   importData: (data: string) => boolean;
@@ -55,7 +55,7 @@ type SettingsState = {
   resetQuizHistory: () => void;
   resetAchievements: () => void;
   resetLeaderboard: () => void;
-  
+
   // Notification Permissions
   requestNotificationPermission: () => Promise<boolean>;
   sendNotification: (title: string, body: string) => void;
@@ -92,7 +92,9 @@ const applyTheme = (theme: ThemeMode) => {
     document.documentElement.classList.remove("dark");
   } else {
     // System preference
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
     if (prefersDark) {
       document.documentElement.classList.add("dark");
     } else {
@@ -162,35 +164,36 @@ export const useSettingsStore = create(
       importData: (data) => {
         try {
           const parsed = JSON.parse(data);
-          
+
           // Import settings
           if (parsed.settings) {
             set({
               theme: parsed.settings.theme || get().theme,
               colorPalette: parsed.settings.colorPalette || get().colorPalette,
               quizSettings: parsed.settings.quizSettings || get().quizSettings,
-              notifications: parsed.settings.notifications || get().notifications,
+              notifications:
+                parsed.settings.notifications || get().notifications,
               userProfile: parsed.settings.userProfile || get().userProfile,
             });
           }
-          
+
           // Import quiz history
           if (parsed.quizHistory) {
             Object.entries(parsed.quizHistory).forEach(([key, value]) => {
               localStorage.setItem(key, JSON.stringify(value));
             });
           }
-          
+
           // Import achievements
           if (parsed.achievements) {
             localStorage.setItem("achievements-storage", parsed.achievements);
           }
-          
+
           // Import leaderboard
           if (parsed.leaderboard) {
             localStorage.setItem("leaderboard-storage", parsed.leaderboard);
           }
-          
+
           return true;
         } catch (error) {
           console.error("Import failed:", error);
@@ -201,7 +204,7 @@ export const useSettingsStore = create(
       resetAllData: () => {
         // Clear all localStorage
         localStorage.clear();
-        
+
         // Reset to defaults
         set({
           theme: "system",
@@ -235,17 +238,17 @@ export const useSettingsStore = create(
 
         const permission = await Notification.requestPermission();
         const enabled = permission === "granted";
-        
+
         set((state) => ({
           notifications: { ...state.notifications, enabled },
         }));
-        
+
         return enabled;
       },
 
       sendNotification: (title, body) => {
         if (!get().notifications.enabled) return;
-        
+
         if (Notification.permission === "granted") {
           new Notification(title, {
             body,
@@ -284,4 +287,3 @@ if (typeof window !== "undefined") {
     applyTheme("system");
   }
 }
-

@@ -31,7 +31,7 @@ type QuizHistoryItem = {
 function History() {
   const { currentUser } = useAuthStore();
   const navigate = useNavigate();
-  
+
   // State
   const [results, setResults] = useState<QuizHistoryItem[]>([]);
   const [sortKey, setSortKey] = useState<SortKey>("date_desc");
@@ -43,28 +43,28 @@ function History() {
   // Export functions
   const exportToCSV = () => {
     if (!currentUser) return;
-    
+
     const headers = ["Date", "Correct", "Wrong", "Skipped", "Percentage"];
     const csvContent = [
       headers.join(","),
       ...results.map((result) =>
         [
-        result.date,
-        result.score,
-        result.wrongAnswers,
-        result.skippedQuestions,
+          result.date,
+          result.score,
+          result.wrongAnswers,
+          result.skippedQuestions,
           result.percentage,
         ].join(",")
       ),
     ].join("\n");
-    
+
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     saveAs(blob, `quiz-history-${currentUser.email.split("@")[0]}.csv`);
   };
 
   const exportToJSON = () => {
     if (!currentUser) return;
-    
+
     const jsonContent = JSON.stringify(results, null, 2);
     const blob = new Blob([jsonContent], {
       type: "application/json;charset=utf-8;",
@@ -74,7 +74,7 @@ function History() {
 
   const resetHistory = () => {
     if (!currentUser) return;
-    
+
     const storageKey = `quizHistory_${currentUser.email}`;
     localStorage.removeItem(storageKey);
     setResults([]);
@@ -92,11 +92,7 @@ function History() {
 
 #QuickMindQuiz #Statistics`;
 
-    navigator.clipboard
-      .writeText(statsText)
-      .catch(() => {
-        // noop - kullanıcıya UI içinde bilgi gösteriyoruz
-      });
+    navigator.clipboard.writeText(statsText).catch(() => {});
   };
 
   // Share quiz stats

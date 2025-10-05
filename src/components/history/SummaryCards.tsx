@@ -209,11 +209,11 @@ export function SummaryCards({ summary }: SummaryCardsProps) {
                 textSize: "0px",
               })}
             />
-             <div className="absolute inset-0 flex items-center justify-center">
-               <span className="text-white text-sm font-semibold">
-                 {summary.averagePercentage}%
-               </span>
-             </div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-white text-sm font-semibold">
+                {summary.averagePercentage}%
+              </span>
+            </div>
           </div>
         </CardContent>
       </Card>

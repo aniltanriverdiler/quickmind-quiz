@@ -7,6 +7,7 @@ import LevelPage from "../pages/LevelPage";
 import LeaderBoardPage from "../pages/LeaderBoardPage";
 import Achievements from "../pages/Achievements";
 import Settings from "../pages/Settings";
+import About from "../pages/About";
 
 export const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ export const router = createBrowserRouter([
       {
         path: "settings",
         element: <Settings />,
+      },
+      {
+        path: "about",
+        element: <About />,
       },
     ],
   },

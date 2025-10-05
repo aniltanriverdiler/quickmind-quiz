@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -73,8 +78,22 @@ function Settings() {
 
   // Avatar options
   const avatarOptions = [
-    "😀", "😎", "🤓", "🧠", "🎯", "🏆", "🚀", "⭐",
-    "🔥", "💎", "👑", "🎮", "🎨", "🎭", "🎪", "🎸",
+    "😀",
+    "😎",
+    "🤓",
+    "🧠",
+    "🎯",
+    "🏆",
+    "🚀",
+    "⭐",
+    "🔥",
+    "💎",
+    "👑",
+    "🎮",
+    "🎨",
+    "🎭",
+    "🎪",
+    "🎸",
   ];
 
   // Handle Export
@@ -85,7 +104,9 @@ function Settings() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `quickmind-backup-${new Date().toISOString().split("T")[0]}.json`;
+      a.download = `quickmind-backup-${
+        new Date().toISOString().split("T")[0]
+      }.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -172,7 +193,7 @@ function Settings() {
       <div className="relative z-20 max-w-6xl mx-auto pt-8 sm:pt-10 pb-8 p-4 sm:p-6 space-y-6 animate-fadeIn">
         {/* Header */}
         <div className="text-center space-y-2">
-          <h1 className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-blue-500 via-green-400 to-indigo-400 inline-block text-transparent bg-clip-text drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
+          <h1 className="pb-2 text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-blue-500 via-green-400 to-indigo-400 inline-block text-transparent bg-clip-text drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
             ⚙️ Settings
           </h1>
           <p className="text-xl text-white/80 drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)]">
@@ -285,7 +306,11 @@ function Settings() {
                   </SelectTrigger>
                   <SelectContent className="bg-slate-800/95 backdrop-blur-md border-white/20">
                     {[5, 10, 15, 20, 25].map((num) => (
-                      <SelectItem key={num} value={num.toString()} className="text-white hover:bg-white/20 focus:bg-white/20 focus:text-white cursor-pointer">
+                      <SelectItem
+                        key={num}
+                        value={num.toString()}
+                        className="text-white hover:bg-white/20 focus:bg-white/20 focus:text-white cursor-pointer"
+                      >
                         {num} Questions
                       </SelectItem>
                     ))}
@@ -308,9 +333,24 @@ function Settings() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-slate-800/95 backdrop-blur-md border-white/20">
-                    <SelectItem value="easy" className="text-white hover:bg-white/20 focus:bg-white/20 focus:text-white cursor-pointer">Easy</SelectItem>
-                    <SelectItem value="medium" className="text-white hover:bg-white/20 focus:bg-white/20 focus:text-white cursor-pointer">Medium</SelectItem>
-                    <SelectItem value="hard" className="text-white hover:bg-white/20 focus:bg-white/20 focus:text-white cursor-pointer">Hard</SelectItem>
+                    <SelectItem
+                      value="easy"
+                      className="text-white hover:bg-white/20 focus:bg-white/20 focus:text-white cursor-pointer"
+                    >
+                      Easy
+                    </SelectItem>
+                    <SelectItem
+                      value="medium"
+                      className="text-white hover:bg-white/20 focus:bg-white/20 focus:text-white cursor-pointer"
+                    >
+                      Medium
+                    </SelectItem>
+                    <SelectItem
+                      value="hard"
+                      className="text-white hover:bg-white/20 focus:bg-white/20 focus:text-white cursor-pointer"
+                    >
+                      Hard
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -332,7 +372,9 @@ function Settings() {
                   >
                     <span
                       className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                        quizSettings.showTimer ? "translate-x-6" : "translate-x-1"
+                        quizSettings.showTimer
+                          ? "translate-x-6"
+                          : "translate-x-1"
                       }`}
                     />
                   </button>
@@ -353,7 +395,9 @@ function Settings() {
                   >
                     <span
                       className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                        quizSettings.autoSave ? "translate-x-6" : "translate-x-1"
+                        quizSettings.autoSave
+                          ? "translate-x-6"
+                          : "translate-x-1"
                       }`}
                     />
                   </button>
@@ -375,7 +419,9 @@ function Settings() {
                       })
                     }
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      quizSettings.soundEffects ? "bg-green-500/50" : "bg-white/20"
+                      quizSettings.soundEffects
+                        ? "bg-green-500/50"
+                        : "bg-white/20"
                     }`}
                   >
                     <span
@@ -587,13 +633,22 @@ function Settings() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="bg-slate-800/95 backdrop-blur-md border-white/20">
-                        <SelectItem value="public" className="text-white hover:bg-white/20 focus:bg-white/20 focus:text-white cursor-pointer">
+                        <SelectItem
+                          value="public"
+                          className="text-white hover:bg-white/20 focus:bg-white/20 focus:text-white cursor-pointer"
+                        >
                           Public
                         </SelectItem>
-                        <SelectItem value="friends" className="text-white hover:bg-white/20 focus:bg-white/20 focus:text-white cursor-pointer">
+                        <SelectItem
+                          value="friends"
+                          className="text-white hover:bg-white/20 focus:bg-white/20 focus:text-white cursor-pointer"
+                        >
                           Friends Only
                         </SelectItem>
-                        <SelectItem value="private" className="text-white hover:bg-white/20 focus:bg-white/20 focus:text-white cursor-pointer">
+                        <SelectItem
+                          value="private"
+                          className="text-white hover:bg-white/20 focus:bg-white/20 focus:text-white cursor-pointer"
+                        >
                           Private
                         </SelectItem>
                       </SelectContent>
@@ -636,7 +691,9 @@ function Settings() {
                     <Input
                       type="file"
                       accept=".json"
-                      onChange={(e) => setImportFile(e.target.files?.[0] || null)}
+                      onChange={(e) =>
+                        setImportFile(e.target.files?.[0] || null)
+                      }
                       className="bg-white/15 border-white/30 text-white file:text-white/80"
                     />
                     <Button
@@ -669,7 +726,8 @@ function Settings() {
                         Reset Quiz History
                       </AlertDialogTitle>
                       <AlertDialogDescription className="text-white/80">
-                        This will permanently delete all your quiz history. This action cannot be undone.
+                        This will permanently delete all your quiz history. This
+                        action cannot be undone.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -738,4 +796,3 @@ function Settings() {
 }
 
 export default Settings;
-
