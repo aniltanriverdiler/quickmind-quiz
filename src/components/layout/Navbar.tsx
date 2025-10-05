@@ -214,7 +214,7 @@ function Navbar() {
                     {/* Left: Image with subtle rounded frame */}
                     <div className="relative hidden md:block bg-black">
                       <img
-                        src="public/login.jpg"
+                        src="/login.jpg"
                         alt="login visual"
                         className="h-full w-full object-cover"
                       />
@@ -353,7 +353,7 @@ function Navbar() {
                             className="w-full px-2 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all duration-200"
                           >
                             <img
-                              src="public/google-icon.png"
+                              src="/google-icon.png"
                               alt="google"
                               className="w-4 h-4"
                             />
@@ -365,7 +365,7 @@ function Navbar() {
                             className="w-full px-2 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all duration-200"
                           >
                             <img
-                              src="public/facebook-icon.png"
+                              src="/facebook-icon.png"
                               alt="facebook"
                               className="w-4 h-4"
                             />
@@ -428,7 +428,7 @@ function Navbar() {
                     {/* Left: Image */}
                     <div className="relative hidden md:block bg-black">
                       <img
-                        src="public/register.jpg"
+                        src="/register.jpg"
                         alt="register visual"
                         className="h-full w-full object-cover"
                       />
@@ -599,7 +599,7 @@ function Navbar() {
                             className="w-full px-2 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all duration-200"
                           >
                             <img
-                              src="public/google-icon.png"
+                              src="/google-icon.png"
                               alt="google"
                               className="w-4 h-4"
                             />
@@ -611,7 +611,7 @@ function Navbar() {
                             className="w-full px-2 bg-white/10 border-white/20 text-white hover:bg-white/20 hover:border-white/30 transition-all duration-200"
                           >
                             <img
-                              src="public/facebook-icon.png"
+                              src="/facebook-icon.png"
                               alt="facebook"
                               className="w-4 h-4"
                             />
