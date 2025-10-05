@@ -35,7 +35,6 @@ import {
   FileText,
 } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useQuizStore } from "../store/quizStore";
 import { useAuthStore } from "../store/authStore";
 import { useLeaderboardStore } from "../store/leader";
 import { useAchievements } from "../store/achievements";
